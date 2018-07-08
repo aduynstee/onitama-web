@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Game(models.Model):
-    start_date = models.DateTimeField()
+    start_date = models.DateTimeField(auto_now_add=True)
     cards = models.ManyToManyField("Card", through="GameCard")
 
 
