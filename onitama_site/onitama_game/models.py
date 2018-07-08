@@ -21,6 +21,10 @@ class Move(models.Model):
     end = models.CharField(max_length=2, choices=LOCATION_CHOICES)
     card = models.ForeignKey("Card", on_delete=models.CASCADE)
 
+    class Meta:
+        ordering = ["turn"]
+        unique_together = ("game", "turn")
+
 
 class Card(models.Model):
     name = models.CharField(max_length=10)
