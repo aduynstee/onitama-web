@@ -1,3 +1,5 @@
+from .exceptions import GameIntegrityError
+from .modules import onitama as oni
 from django.test import TestCase
 from .models import Game, Card, GameCard, Move
 
@@ -61,4 +63,28 @@ class MyTest(TestCase):
             end='C4',
             card=Card.objects.get(name='HORSE')
         )
+
+    def test_live_game_creation(self):
+        live_game = self.game.as_live_game()
+        self.assertEqual(live_game.pawns[oni.Player.RED], {(x, 0) for x in [0, 1, 3, 4]})
+        self.assertEqual(live_game.pawns[oni.Player.BLUE], {(x, 4) for x in [0, 1, 3, 4]})
+        self.assertEqual(live_game.kings[oni.Player.RED], {(2, 3)})
+        self.assertEqual(live_game.kings[oni.Player.BLUE], {(2, 1)})
+        locs = {(x, y) for x in range(5) for y in range(5)}
+        locs.difference_update({(x, 0) for x in [0, 1, 3, 4]}.union({(x, 4) for x in [0, 1, 3, 4]}))
+        locs.difference_update({(2, 3), (2, 1)})
+        for loc in locs:
+            self.assertEqual(live_game.board.get(loc), oni.Piece.EMPTY)
+
+    def test_bad_move(self):
+        Move.objects.create(
+            game=self.game,
+            player='R',
+            turn=6,
+            start='C1',
+            end='C2',
+            card=Card.objects.get(name='HORSE')
+        )
+        with self.assertRaises(GameIntegrityError):
+            self.game.as_live_game()
 
