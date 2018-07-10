@@ -1,3 +1,4 @@
+import json
 from .exceptions import GameIntegrityError
 from .modules import onitama as oni
 from django.test import TestCase
@@ -88,3 +89,10 @@ class MyTest(TestCase):
         with self.assertRaises(GameIntegrityError):
             self.game.as_live_game()
 
+    def test_client_encode(self):
+        obj = json.loads(self.game.client_encode())
+        self.assertTrue(obj['lastTurn'] == 5)
+        self.assertTrue(len(obj['turns']) == 6)
+        self.assertEqual(obj['turns'][0]['board'][0:5], ['redpawn', 'redpawn', 'redking', 'redpawn', 'redpawn'])
+        self.assertEqual(obj['turns'][0]['board'][5:20], ['empty' for _ in range(15)])
+        self.assertEqual(obj['turns'][0]['board'][20:25], ['bluepawn', 'bluepawn', 'blueking', 'bluepawn', 'bluepawn'])

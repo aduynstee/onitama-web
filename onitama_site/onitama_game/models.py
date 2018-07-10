@@ -1,3 +1,4 @@
+import json
 from .modules import onitama as oni
 from .exceptions import GameIntegrityError
 from django.db import models
@@ -19,6 +20,56 @@ class Game(models.Model):
             except oni.IllegalMoveError:
                 raise GameIntegrityError(self, move)
         return live_game
+
+    # Return a customized encoding of the game that will be used on the client side
+    def client_encode(self):
+        gc = GameCard.objects.filter(game=self)
+        red = [x.card.as_live_card() for x in gc.filter(cardholder='R')]
+        blue = [x.card.as_live_card() for x in gc.filter(cardholder='B')]
+        neutral = [gc.filter(cardholder='N').first().card.as_live_card()]
+        live_game = oni.Game(red + blue + neutral)
+        card_mapping = {card.as_live_card(): card.name.lower() for card in self.cards.all()}
+        piece_mapping = {
+            oni.Piece.EMPTY: 'empty',
+            oni.Piece.R_PAWN: 'redpawn',
+            oni.Piece.R_KING: 'redking',
+            oni.Piece.B_PAWN: 'bluepawn',
+            oni.Piece.B_KING: 'blueking'
+        }
+        start_player = live_game.active_player
+
+        def board_func(game):
+            return list(map(lambda x: piece_mapping[x], game.board._Board__array))
+
+        def card_func(game):
+            cardlist = game.cards[oni.Player.RED] + game.cards[oni.Player.BLUE] + [game.neutral_card]
+            return [card_mapping[card] for card in cardlist]
+
+        turns = [{
+            'number': 0,
+            'cards': card_func(live_game),
+            'board': board_func(live_game),
+            'lastMove': None,
+        }]
+        for move in self.move_set.all():
+            try:
+                live_game.do_move(move.as_live_move())
+                turns.append({
+                    'number': move.turn,
+                    'cards': card_func(live_game),
+                    'board': board_func(live_game),
+                    'lastMove': '{}-{} [{}]'.format(move.start.lower(), move.end.lower(), move.card.name.lower())
+                })
+            except oni.IllegalMoveError:
+                raise GameIntegrityError(self, move)
+        result = {
+            'turns': turns,
+            'activePlayer': 'red' if live_game.active_player == oni.Player.RED else 'blue',
+            'lastTurn': self.move_set.last().turn,
+            'legalMoves': [],  # TODO generate legal moves
+            'startPlayer': 'red' if start_player == oni.Player.RED else 'blue',
+        }
+        return json.dumps(result)
 
 
 class Move(models.Model):
