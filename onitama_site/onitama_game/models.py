@@ -39,7 +39,7 @@ class Game(models.Model):
         start_player = live_game.active_player
 
         def board_func(game):
-            return list(map(lambda x: piece_mapping[x], game.board._Board__array))
+            return list(map(lambda x: piece_mapping[x], game.board.array))
 
         def card_func(game):
             cardlist = game.cards[oni.Player.RED] + game.cards[oni.Player.BLUE] + [game.neutral_card]
