@@ -96,3 +96,15 @@ class MyTest(TestCase):
         self.assertEqual(obj['turns'][0]['board'][0:5], ['redpawn', 'redpawn', 'redking', 'redpawn', 'redpawn'])
         self.assertEqual(obj['turns'][0]['board'][5:20], ['empty' for _ in range(15)])
         self.assertEqual(obj['turns'][0]['board'][20:25], ['bluepawn', 'bluepawn', 'blueking', 'bluepawn', 'bluepawn'])
+        for key, value in obj['legalMoves'].items():
+            self.assertTrue(key in {'ox', 'boar'})
+        ox_moves = obj['legalMoves']['ox']
+        # Using Ox card c2 can go to c1 c3 b2
+        self.assertEqual(set(ox_moves[7]), {2, 12, 6})
+        blue_pieces = {20, 21, 23, 24, 7}
+        for i, moves in enumerate(ox_moves):
+            if i in blue_pieces:
+                self.assertFalse(moves is None)
+            else:
+                self.assertTrue(moves is None)
+        self.assertEqual(set(ox_moves[20]), {15})

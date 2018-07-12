@@ -62,11 +62,20 @@ class Game(models.Model):
                 })
             except oni.IllegalMoveError:
                 raise GameIntegrityError(self, move)
+        lm = dict()
+        for card, move_dict in live_game.legal_moves().items():
+            movelist = [None for _ in range(25)]
+            for start, end_set in move_dict.items():
+                index = start[0] + 5*start[1]
+                endlist = [coord[0] + 5*coord[1] for coord in end_set]
+                movelist[index] = endlist
+            card_name = card_mapping[card]
+            lm[card_name] = movelist
         result = {
             'turns': turns,
             'activePlayer': 'red' if live_game.active_player == oni.Player.RED else 'blue',
             'lastTurn': self.move_set.last().turn,
-            'legalMoves': [],  # TODO generate legal moves
+            'legalMoves': lm,  # TODO generate legal moves
             'startPlayer': 'red' if start_player == oni.Player.RED else 'blue',
         }
         return json.dumps(result)
