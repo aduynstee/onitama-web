@@ -1,0 +1,30 @@
+.App {
+    border: 5px solid green;
+}
+
+#game {
+    margin: auto;
+    width: 50%;
+    border: 5px solid black;
+    text-align: center;
+}
+
+.card-row {
+    text-align: center;
+}
+
+.card-row .card {
+    display: inline-block;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.board-row .board-square {
+    display: inline-block;
+}
+
+.game-left, .game-center, .game-right {
+    display: inline-block;
+    margin-left: 5px;
+    margin-right: 5px;
+}
