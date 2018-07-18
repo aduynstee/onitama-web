@@ -1,6 +1,32 @@
 import React, { Component } from 'react';
 import './App.css';
 
+class Piece extends Component {
+    render() {
+        let val = "X";
+        switch(this.props.value) {
+            case "redpawn":
+            case "bluepawn":
+                val = "P";
+                break;
+            case "redking":
+            case "blueking":
+                val = "K";
+                break;
+            case "empty":
+                val = "E";
+                break;
+            default:
+                break;
+        }
+        return (
+            <div className={this.props.value}>
+                {val}
+            </div>
+        )
+    }
+}
+
 class Game extends Component {
     constructor(props) {
         super(props);
@@ -54,32 +80,24 @@ class Game extends Component {
 }
 
 class Card extends Component {
-    constructor(props) {
-        super(props);
-        this.name = props.name;
-    }
-
     render() {
         return (
             <div className="card">
-                {this.name}
+                {this.props.name}
             </div>
         )
     }
 }
 
 class Board extends Component {
-    constructor(props) {
-        super(props);
-        this.state = props.state;
-    }
-
     render() {
         let squares = []
-        for (let i = 0; i < this.state.length; i++) {
+        for (let i = 0; i < this.props.state.length; i++) {
             squares[i] = (
                 <div className="board-square">
-                    {this.state[i]}
+                    <Piece
+                        value = {this.props.state[i]}
+                    />
                 </div>
             )
         }
@@ -100,10 +118,6 @@ class Board extends Component {
 }
 
 class TurnList extends Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         return (
             <div className="turn-list">
