@@ -29,3 +29,11 @@
     margin-left: 5px;
     margin-right: 5px;
 }
+
+.redpawn, .redking {
+    color: red;
+}
+
+.bluepawn, .blueking {
+    color: blue;
+}
