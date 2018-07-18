@@ -38,6 +38,12 @@ class Game extends Component {
                 'opponent': Array(2).fill('opp card'),
             }
         };
+        for (let i = 0; i < 5; i++) {
+            this.state.board[i] = "redpawn";
+            this.state.board[24-i] = "bluepawn";
+        }
+        this.state.board[2] = "redking";
+        this.state.board[22] = "blueking";
     }
 
     render() {
