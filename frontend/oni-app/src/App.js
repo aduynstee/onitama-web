@@ -30,35 +30,35 @@ class Piece extends Component {
 class Game extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            'board': Array(25).fill('empty'),
-            'cards': {
-                'user': Array(2).fill('user card'),
-                'neutral': 'neutral card',
-                'opponent': Array(2).fill('opp card'),
-            }
-        };
-        for (let i = 0; i < 5; i++) {
-            this.state.board[i] = "redpawn";
-            this.state.board[24-i] = "bluepawn";
+        this.data = props.data;
+        let currentTurn = this.data.turns[this.data.turns.length-1];
+        let moves = [];
+        for (let i = 1; i < this.data.turns.length; i++) {
+            moves.push(this.data.turns[i].lastMove);
         }
-        this.state.board[2] = "redking";
-        this.state.board[22] = "blueking";
+        this.state = {
+            'board': currentTurn.board,
+            'cards': currentTurn.cards,
+            'displayTurn': currentTurn.number,
+            'moves': moves,
+            'selectedSquare': null,
+            'highlightSquares': [],
+        };
     }
 
     render() {
         return (
             <div id="game">
                 <div className="game-left">
-                    <TurnList />
+                    <MoveList moves={this.state.moves} />
                 </div>
                 <div className="game-center">
                     <div className="card-row">
                         <Card
-                            name={this.state.cards.opponent[0]}
+                            name={this.state.cards[2]}
                         />
                         <Card
-                            name={this.state.cards.opponent[1]}
+                            name={this.state.cards[3]}
                         />
                     </div>
                     <Board
@@ -66,17 +66,17 @@ class Game extends Component {
                     />
                     <div className="card-row">
                         <Card
-                            name={this.state.cards.user[0]}
+                            name={this.state.cards[0]}
                         />
                         <Card
-                            name={this.state.cards.user[1]}
+                            name={this.state.cards[1]}
                         />
                     </div>
                 </div>
                 <div className="game-right">
                     <div className="neutral-card">
                         <Card
-                            name={this.state.cards.neutral}
+                            name={this.state.cards[4]}
                         />
                     </div>
                 </div>
@@ -123,15 +123,19 @@ class Board extends Component {
     }
 }
 
-class TurnList extends Component {
+class MoveList extends Component {
     render() {
+        let movelist = [];
+        for (let i in this.props.moves) {
+            movelist.push(
+                <div className="move">
+                    {this.props.moves[i]}
+                </div>
+            );
+        }
         return (
             <div className="turn-list">
-                <div className="turn">Turns go here</div>
-                <div className="turn">Turns go here</div>
-                <div className="turn">Turns go here</div>
-                <div className="turn">Turns go here</div>
-                <div className="turn">Turns go here</div>
+                {movelist}
             </div>
         )
     }
@@ -141,7 +145,7 @@ class App extends Component {
     render() {
         return (
             <div className="App">
-                 <Game/>
+                 <Game data={this.props.data}/>
             </div>
         );
     }
