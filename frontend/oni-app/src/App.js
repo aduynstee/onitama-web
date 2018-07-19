@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import './App.css';
+import React, { Component } from "react";
+import "./App.css";
 
 class Piece extends Component {
     render() {
@@ -32,25 +32,43 @@ class Game extends Component {
         super(props);
         this.data = props.data;
         let currentTurn = this.data.turns[this.data.turns.length-1];
-        let moves = [];
+        let moves = ["Start"];
         for (let i = 1; i < this.data.turns.length; i++) {
             moves.push(this.data.turns[i].lastMove);
         }
         this.state = {
-            'board': currentTurn.board,
-            'cards': currentTurn.cards,
-            'displayTurn': currentTurn.number,
-            'moves': moves,
-            'selectedSquare': null,
-            'highlightSquares': [],
+            "board": currentTurn.board,
+            "cards": currentTurn.cards,
+            "displayTurn": currentTurn.number,
+            "moves": moves,
+            "selectedSquare": null,
+            "highlightSquares": [],
+            "currentTurn": currentTurn.number,
+            "activePlayer": currentTurn.activePlayer,
+            "userPlayer": props.userPlayer,
         };
+        this.showTurn = this.showTurn.bind(this);
+    }
+
+    showTurn(turnNumber) {
+        let turn = this.data.turns[turnNumber];
+        this.setState({
+            "board": turn.board,
+            "cards": turn.cards,
+            "displayTurn": turn.number,
+            "selectedSquare": null,
+            "highlightSquares": [],
+        });
     }
 
     render() {
         return (
             <div id="game">
                 <div className="game-left">
-                    <MoveList moves={this.state.moves} />
+                    <MoveList
+                        moves={this.state.moves}
+                        clickHandler={this.showTurn}
+                    />
                 </div>
                 <div className="game-center">
                     <div className="card-row">
@@ -128,7 +146,10 @@ class MoveList extends Component {
         let movelist = [];
         for (let i in this.props.moves) {
             movelist.push(
-                <div className="move">
+                <div
+                    className="move"
+                    onClick={() => this.props.clickHandler(i)}
+                >
                     {this.props.moves[i]}
                 </div>
             );

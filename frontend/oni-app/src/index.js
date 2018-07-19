@@ -23,5 +23,5 @@ var data = {
 };
 
 
-ReactDOM.render(<App data={data} />, document.getElementById('root'));
+ReactDOM.render(<App data={data} userPlayer="red" />, document.getElementById('root'));
 registerServiceWorker();
