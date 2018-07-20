@@ -37,3 +37,11 @@
 .bluepawn, .blueking {
     color: blue;
 }
+
+.highlight {
+    background-color: yellow;
+}
+
+.selected {
+    background-color: green;
+}

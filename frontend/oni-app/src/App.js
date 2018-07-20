@@ -48,6 +48,7 @@ class Game extends Component {
             "userPlayer": props.userPlayer,
         };
         this.showTurn = this.showTurn.bind(this);
+        this.selectSquare = this.selectSquare.bind(this);
     }
 
     showTurn(turnNumber) {
@@ -59,6 +60,31 @@ class Game extends Component {
             "selectedSquare": null,
             "highlightSquares": [],
         });
+    }
+
+    selectSquare(number) {
+        if (this.state.userPlayer === this.state.activePlayer
+            && this.state.displayTurn === this.state.currentTurn) {
+            let cards;
+            if (this.state.userPlayer === "red") {
+                cards = this.state.cards.slice(0,2);
+            } else {
+                cards = this.state.cards.slice(2,4);
+            }
+            let moves = [];
+            for (let i in cards) {
+                let cardMoves = this.data.legalMoves[cards[i]][number];
+                if (cardMoves !== null) {
+                    moves = moves.concat(cardMoves);
+                }
+            }
+            if (moves.length > 0) {
+                this.setState({
+                    "selectedSquare": number,
+                    "highlightSquares": moves,
+                });
+            }
+        }
     }
 
     render() {
@@ -80,7 +106,10 @@ class Game extends Component {
                         />
                     </div>
                     <Board
-                        state={this.state.board}
+                        board={this.state.board}
+                        highlight={this.state.highlightSquares}
+                        select={this.state.selectedSquare}
+                        selectionHandler={this.selectSquare}
                     />
                     <div className="card-row">
                         <Card
@@ -116,11 +145,22 @@ class Card extends Component {
 class Board extends Component {
     render() {
         let squares = []
-        for (let i = 0; i < this.props.state.length; i++) {
+        for (let i = 0; i < this.props.board.length; i++) {
+            let cls;
+            if (this.props.highlight.includes(i)) {
+                cls = "board-square highlight";
+            } else if (this.props.select === i) {
+                cls = "board-square selected";
+            } else {
+                cls = "board-square";
+            }
             squares[i] = (
-                <div className="board-square">
+                <div
+                    className={cls}
+                    onClick={() => this.props.selectionHandler(i)}
+                >
                     <Piece
-                        value = {this.props.state[i]}
+                        value = {this.props.board[i]}
                     />
                 </div>
             )
