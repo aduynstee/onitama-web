@@ -72,7 +72,7 @@ class Game extends Component {
             }
             if (this.state.selectedSquare === null) {
                 let moves = [];
-                for (let i in cards) {
+                for (let i = 0; i < cards.length; i++) {
                     let cardMoves = this.data.legalMoves[cards[i]][number];
                     if (cardMoves !== null) {
                         moves = moves.concat(cardMoves);
@@ -88,7 +88,7 @@ class Game extends Component {
                 //Square was selected to we try to treat it as a move
                 let source = this.state.selectedSquare;
                 let moves = [];
-                for (let i in cards) {
+                for (let i = 0; i < cards.length; i++) {
                     let cardMoves = this.data.legalMoves[cards[i]][source];
                     if (cardMoves !== null) {
                         moves = moves.concat(cardMoves);
@@ -99,7 +99,7 @@ class Game extends Component {
                 } else {
                     //Was not a legal move, so treat it as a square selection
                     moves = [];
-                    for (let i in cards) {
+                    for (let i = 0; i < cards.length; i++) {
                         let cardMoves = this.data.legalMoves[cards[i]][number];
                         if (cardMoves !== null) {
                             moves = moves.concat(cardMoves);
