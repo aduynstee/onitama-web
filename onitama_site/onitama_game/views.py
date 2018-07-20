@@ -1,4 +1,9 @@
 from django.shortcuts import render
+from .models import Game
 
 def index(request):
-    return render(request, 'onitama_game/index.html', {})
+    game_list = Game.objects.all()
+    context = {
+        'game_list': game_list,
+    }
+    return render(request, 'onitama_game/index.html', context)
