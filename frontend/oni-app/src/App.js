@@ -62,10 +62,10 @@ class Game extends Component {
     }
 
     selectSquare(number) {
-        if ((this.userPlayer == this.data.activePlayer)
+        if ((this.userPlayer === this.data.activePlayer)
             && (this.state.displayTurn === this.state.currentTurn)) {
             let cards;
-            if (this.userPlayer == "red") {
+            if (this.userPlayer === "red") {
                 cards = this.state.cards.slice(0,2);
             } else {
                 cards = this.state.cards.slice(2,4);
@@ -122,6 +122,7 @@ class Game extends Component {
                 <div className="game-left">
                     <MoveList
                         moves={this.state.moves}
+                        selectedMove={this.state.displayTurn}
                         clickHandler={this.showTurn}
                     />
                 </div>
@@ -185,6 +186,7 @@ class Board extends Component {
             }
             squares[i] = (
                 <div
+                    key={i}
                     className={cls}
                     onClick={() => this.props.clickHandler(i)}
                 >
@@ -198,7 +200,10 @@ class Board extends Component {
         //Row 0 should be blue's start row (squares 20 through 24)
         for (let i = 0; i < 5; i++) {
             rows[5-i] = (
-                <div className="board-row">
+                <div
+                    className="board-row"
+                    key={i}
+                >
                     {squares.slice(5*i, 5*(i+1))}
                 </div>
             )
@@ -214,10 +219,17 @@ class Board extends Component {
 class MoveList extends Component {
     render() {
         let movelist = [];
-        for (let i in this.props.moves) {
+        for (let i = 0; i < this.props.moves.length; i++) {
+            let cls;
+            if (i === this.props.selectedMove) {
+                cls = "move selected";
+            } else {
+                cls = "move";
+            }
             movelist.push(
                 <div
-                    className="move"
+                    key={i}
+                    className={cls}
                     onClick={() => this.props.clickHandler(i)}
                 >
                     {this.props.moves[i]}
