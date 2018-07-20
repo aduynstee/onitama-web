@@ -22,6 +22,8 @@ var data = {
     "startPlayer": "red"
 };
 var user = "blue";
-
-ReactDOM.render(<App data={data} userPlayer={user} />, document.getElementById('root'));
-registerServiceWorker();
+var socket = new WebSocket("ws://localhost:8000/ws/onitama/");
+socket.onopen = function(e) {
+    ReactDOM.render(<App data={data} userPlayer={user} socket={socket} />, document.getElementById('root'));
+    registerServiceWorker();
+}

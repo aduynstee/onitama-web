@@ -48,6 +48,11 @@ class Game extends Component {
         this.userPlayer = props.userPlayer;
         this.showTurn = this.showTurn.bind(this);
         this.selectSquare = this.selectSquare.bind(this);
+        this.socket = props.socket;
+        this.socket.onmessage = function(e) {
+            console.log(e.data);
+        }
+        this.socket.send("Hello from React!");
     }
 
     showTurn(turnNumber) {
@@ -251,6 +256,7 @@ class App extends Component {
                  <Game
                     data={this.props.data}
                     userPlayer={this.props.userPlayer}
+                    socket={this.props.socket}
                 />
             </div>
         );
