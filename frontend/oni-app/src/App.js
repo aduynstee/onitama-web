@@ -44,9 +44,8 @@ class Game extends Component {
             "selectedSquare": null,
             "highlightSquares": [],
             "currentTurn": currentTurn.number,
-            "activePlayer": currentTurn.activePlayer,
-            "userPlayer": props.userPlayer,
         };
+        this.userPlayer = props.userPlayer;
         this.showTurn = this.showTurn.bind(this);
         this.selectSquare = this.selectSquare.bind(this);
     }
@@ -63,26 +62,56 @@ class Game extends Component {
     }
 
     selectSquare(number) {
-        if (this.state.userPlayer === this.state.activePlayer
-            && this.state.displayTurn === this.state.currentTurn) {
+        if ((this.userPlayer == this.data.activePlayer)
+            && (this.state.displayTurn === this.state.currentTurn)) {
             let cards;
-            if (this.state.userPlayer === "red") {
+            if (this.userPlayer == "red") {
                 cards = this.state.cards.slice(0,2);
             } else {
                 cards = this.state.cards.slice(2,4);
             }
-            let moves = [];
-            for (let i in cards) {
-                let cardMoves = this.data.legalMoves[cards[i]][number];
-                if (cardMoves !== null) {
-                    moves = moves.concat(cardMoves);
+            if (this.state.selectedSquare === null) {
+                let moves = [];
+                for (let i in cards) {
+                    let cardMoves = this.data.legalMoves[cards[i]][number];
+                    if (cardMoves !== null) {
+                        moves = moves.concat(cardMoves);
+                    }
                 }
-            }
-            if (moves.length > 0) {
-                this.setState({
-                    "selectedSquare": number,
-                    "highlightSquares": moves,
-                });
+                if (moves.length > 0) {
+                    this.setState({
+                        "selectedSquare": number,
+                        "highlightSquares": moves,
+                    });
+                }
+            } else {
+                //Square was selected to we try to treat it as a move
+                let source = this.state.selectedSquare;
+                let moves = [];
+                for (let i in cards) {
+                    let cardMoves = this.data.legalMoves[cards[i]][source];
+                    if (cardMoves !== null) {
+                        moves = moves.concat(cardMoves);
+                    }
+                }
+                if (moves.includes(number)) {
+                    alert("Legal move to square "+number);
+                } else {
+                    //Was not a legal move, so treat it as a square selection
+                    moves = [];
+                    for (let i in cards) {
+                        let cardMoves = this.data.legalMoves[cards[i]][number];
+                        if (cardMoves !== null) {
+                            moves = moves.concat(cardMoves);
+                        }
+                    }
+                    if (moves.length > 0) {
+                        this.setState({
+                            "selectedSquare": number,
+                            "highlightSquares": moves,
+                        });
+                    }
+                }
             }
         }
     }
@@ -109,7 +138,7 @@ class Game extends Component {
                         board={this.state.board}
                         highlight={this.state.highlightSquares}
                         select={this.state.selectedSquare}
-                        selectionHandler={this.selectSquare}
+                        clickHandler={this.selectSquare}
                     />
                     <div className="card-row">
                         <Card
@@ -157,7 +186,7 @@ class Board extends Component {
             squares[i] = (
                 <div
                     className={cls}
-                    onClick={() => this.props.selectionHandler(i)}
+                    onClick={() => this.props.clickHandler(i)}
                 >
                     <Piece
                         value = {this.props.board[i]}
@@ -166,8 +195,9 @@ class Board extends Component {
             )
         }
         let rows = []
+        //Row 0 should be blue's start row (squares 20 through 24)
         for (let i = 0; i < 5; i++) {
-            rows[i] = (
+            rows[5-i] = (
                 <div className="board-row">
                     {squares.slice(5*i, 5*(i+1))}
                 </div>
@@ -206,7 +236,10 @@ class App extends Component {
     render() {
         return (
             <div className="App">
-                 <Game data={this.props.data}/>
+                 <Game
+                    data={this.props.data}
+                    userPlayer={this.props.userPlayer}
+                />
             </div>
         );
     }

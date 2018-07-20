@@ -21,7 +21,7 @@ var data = {
     },
     "startPlayer": "red"
 };
+var user = "blue";
 
-
-ReactDOM.render(<App data={data} userPlayer="red" />, document.getElementById('root'));
+ReactDOM.render(<App data={data} userPlayer={user} />, document.getElementById('root'));
 registerServiceWorker();
