@@ -28,6 +28,7 @@ class TestSessionConsumer(WebsocketConsumer):
     def connect(self):
         self.accept()
         username = self.scope['url_route']['kwargs']['username']
+        print(self.scope['session'].session_key)
         self.scope['session']['connected'] = True
         self.scope['session'].save()
         query = TestSessionUser.objects.filter(username=username)
@@ -35,7 +36,10 @@ class TestSessionConsumer(WebsocketConsumer):
         if query.exists():
             user = query.first()
             if user.has_connected_session():
-                print('reject attempt to use username '+username)
+                if user.session.session_key == session.session_key:
+                    print('Welcome '+username)
+                else:
+                    print('reject attempt to use username '+username)
             else:
                 user.session = session
                 user.save()
