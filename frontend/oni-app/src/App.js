@@ -30,29 +30,40 @@ class Piece extends Component {
 class Game extends Component {
     constructor(props) {
         super(props);
-        this.data = props.data;
-        let currentTurn = this.data.turns[this.data.turns.length-1];
-        let moves = ["Start"];
-        for (let i = 1; i < this.data.turns.length; i++) {
-            moves.push(this.data.turns[i].lastMove);
-        }
         this.state = {
-            "board": currentTurn.board,
-            "cards": currentTurn.cards,
-            "displayTurn": currentTurn.number,
-            "moves": moves,
-            "selectedSquare": null,
-            "highlightSquares": [],
-            "currentTurn": currentTurn.number,
+            "loaded": false,
         };
         this.userPlayer = props.userPlayer;
         this.showTurn = this.showTurn.bind(this);
         this.selectSquare = this.selectSquare.bind(this);
         this.socket = props.socket;
-        this.socket.onmessage = function(e) {
-            console.log(e.data);
+        this.socket.onmessage = (event) => {
+            let msg = JSON.parse(event.data);
+            if (msg.type === "update") {
+                this.update(msg.gameData);
+            }
         }
-        this.socket.send("Hello from React!");
+    }
+
+    update(gameData) {
+        this.data = gameData;
+        let newMoves = ['Start'];
+        for (let i = 1; i < gameData.turns.length; i++) {
+            newMoves.push(gameData.turns[i].lastMove);
+        }
+        this.setState({
+            "moves": newMoves,
+        });
+        let latestTurnNum = gameData.turns.length-1;
+        //If not loaded or user was viewing the latest turn, we update board
+        if (!this.state.loaded ||
+            this.state.displayTurn === this.state.currentTurn) {
+            this.showTurn(latestTurnNum);
+        }
+        this.setState({
+            "currentTurn": latestTurnNum,
+            "loaded": true,
+        });
     }
 
     showTurn(turnNumber) {
@@ -122,48 +133,54 @@ class Game extends Component {
     }
 
     render() {
-        return (
-            <div id="game">
-                <div className="game-left">
-                    <MoveList
-                        moves={this.state.moves}
-                        selectedMove={this.state.displayTurn}
-                        clickHandler={this.showTurn}
-                    />
-                </div>
-                <div className="game-center">
-                    <div className="card-row">
-                        <Card
-                            name={this.state.cards[2]}
-                        />
-                        <Card
-                            name={this.state.cards[3]}
+        if (this.state.loaded) {
+            return (
+                <div id="game">
+                    <div className="game-left">
+                        <MoveList
+                            moves={this.state.moves}
+                            selectedMove={this.state.displayTurn}
+                            clickHandler={this.showTurn}
                         />
                     </div>
-                    <Board
-                        board={this.state.board}
-                        highlight={this.state.highlightSquares}
-                        select={this.state.selectedSquare}
-                        clickHandler={this.selectSquare}
-                    />
-                    <div className="card-row">
-                        <Card
-                            name={this.state.cards[0]}
+                    <div className="game-center">
+                        <div className="card-row">
+                            <Card
+                                name={this.state.cards[2]}
+                            />
+                            <Card
+                                name={this.state.cards[3]}
+                            />
+                        </div>
+                        <Board
+                            board={this.state.board}
+                            highlight={this.state.highlightSquares}
+                            select={this.state.selectedSquare}
+                            clickHandler={this.selectSquare}
                         />
-                        <Card
-                            name={this.state.cards[1]}
-                        />
+                        <div className="card-row">
+                            <Card
+                                name={this.state.cards[0]}
+                            />
+                            <Card
+                                name={this.state.cards[1]}
+                            />
+                        </div>
+                    </div>
+                    <div className="game-right">
+                        <div className="neutral-card">
+                            <Card
+                                name={this.state.cards[4]}
+                            />
+                        </div>
                     </div>
                 </div>
-                <div className="game-right">
-                    <div className="neutral-card">
-                        <Card
-                            name={this.state.cards[4]}
-                        />
-                    </div>
-                </div>
-            </div>
-        )
+            )
+        } else {
+            return (
+                <p> Loading... </p>
+            )
+        }
     }
 }
 
@@ -254,7 +271,6 @@ class App extends Component {
         return (
             <div className="App">
                  <Game
-                    data={this.props.data}
                     userPlayer={this.props.userPlayer}
                     socket={this.props.socket}
                 />
