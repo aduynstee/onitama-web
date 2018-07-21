@@ -1,4 +1,5 @@
 from channels.generic.websocket import WebsocketConsumer
+from django.contrib.sessions.models import Session
 from django.core.exceptions import ObjectDoesNotExist
 from .models import Game
 import json
@@ -19,6 +20,21 @@ class GameConsumer(WebsocketConsumer):
 
     def disconnect(self, close_code):
         pass
+
+    def receive(self, text_data):
+        pass
+
+class TestSessionConsumer(WebsocketConsumer):
+    def connect(self):
+        self.accept()
+        username = self.scope['url_route']['kwargs']['username']
+        self.scope['session']['username'] = username
+        self.scope['session']['connected'] = True
+        self.scope['session'].save()
+
+    def disconnect(self, close_code):
+        self.scope['session']['connected'] = False
+        self.scope['session'].save()
 
     def receive(self, text_data):
         pass
