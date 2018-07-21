@@ -2,7 +2,7 @@ import json
 from .modules import onitama as oni
 from .exceptions import GameIntegrityError
 from django.db import models
-
+from django.contrib.sessions.models import Session
 
 class Game(models.Model):
     start_date = models.DateTimeField(auto_now_add=True)
@@ -126,3 +126,10 @@ class GameCard(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     card = models.ForeignKey(Card, on_delete=models.CASCADE)
     cardholder = models.CharField(max_length=1, choices=CARDHOLDER_CHOICES)
+
+class TestSessionUser(models.Model):
+    username = models.CharField(max_length=100, unique=True)
+    session = models.ForeignKey(Session, on_delete=models.CASCADE)
+
+    def has_connected_session(self):
+        return self.session.get_decoded()['connected']
