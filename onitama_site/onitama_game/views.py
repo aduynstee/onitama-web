@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .models import Game
 
 def index(request):
@@ -7,3 +7,7 @@ def index(request):
         'game_list': game_list,
     }
     return render(request, 'onitama_game/index.html', context)
+
+def game(request, game_id):
+    game = get_object_or_404(Game, pk=game_id)
+    return render(request, 'onitama_game/game.html', {'game': game})
