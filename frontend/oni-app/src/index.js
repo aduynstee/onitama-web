@@ -22,7 +22,7 @@ import registerServiceWorker from './registerServiceWorker';
 //     "startPlayer": "red"
 // };
 var user = "blue";
-var socket = new WebSocket("ws://localhost:8000/ws/onitama/game/1/");
+var socket = new WebSocket(window.socketAddress);
 socket.onopen = function(e) {
     ReactDOM.render(<App userPlayer={user} socket={socket} />, document.getElementById('root'));
     registerServiceWorker();

@@ -10,4 +10,9 @@ def index(request):
 
 def game(request, game_id):
     game = get_object_or_404(Game, pk=game_id)
-    return render(request, 'onitama_game/game.html', {'game': game})
+    socket_url = "ws://localhost:8000/ws/onitama/game/{}/".format(game_id)
+    return render(
+        request,
+        'onitama_game/game.html',
+        {'game': game, 'socket_url': socket_url}
+    )
