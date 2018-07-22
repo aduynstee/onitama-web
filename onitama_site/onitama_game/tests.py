@@ -2,7 +2,10 @@ import json
 from .exceptions import GameIntegrityError
 from .modules import onitama as oni
 from django.test import TestCase
-from .models import Game, Card, GameCard, Move
+from .models import Game, Card, GameCard, Move, Player
+from django.contrib.sessions.backends.db import SessionStore
+from django.contrib.sessions.models import Session
+from django.db import IntegrityError
 
 
 class MyTest(TestCase):
@@ -108,3 +111,11 @@ class MyTest(TestCase):
             else:
                 self.assertTrue(moves is None)
         self.assertEqual(set(ox_moves[20]), {15})
+
+    def test_player(self):
+        s = SessionStore()
+        s.create()
+        session = Session.objects.get(pk=s.session_key)
+        Player.objects.create(game=self.game, color='R', session=session)
+        with self.assertRaises(IntegrityError):
+            Player.objects.create(game=self.game, color='B', session=session)

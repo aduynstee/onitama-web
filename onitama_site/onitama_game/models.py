@@ -2,6 +2,7 @@ import json
 from .modules import onitama as oni
 from .exceptions import GameIntegrityError
 from django.db import models
+from django.contrib.sessions.models import Session
 
 
 class Game(models.Model):
@@ -126,3 +127,18 @@ class GameCard(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     card = models.ForeignKey(Card, on_delete=models.CASCADE)
     cardholder = models.CharField(max_length=1, choices=CARDHOLDER_CHOICES)
+
+class Player(models.Model):
+    COLOR_CHOICES = (
+        ('R', 'Red'),
+        ('B', 'Blue'),
+    )
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    color = models.CharField(max_length=1, choices=COLOR_CHOICES)
+    session = models.ForeignKey(Session, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = (
+            ('game', 'color'),
+            ('game', 'session'),
+        )
