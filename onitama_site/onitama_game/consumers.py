@@ -5,20 +5,28 @@ import json
 
 class GameConsumer(WebsocketConsumer):
     def connect(self):
-        self.accept()
         game_id = self.scope['url_route']['kwargs']['game_id']
-        try:
-            game = Game.objects.get(id=game_id)
-            game_data = json.loads(game.client_encode())
-            self.send(text_data=json.dumps({
-                'gameData': game_data,
-                'type': 'update',
-            }))
-        except ObjectDoesNotExist:
-            pass
+        if (Game.objects.filter(id=game_id).exists()):
+            self.scope['game_id'] = game_id
+            self.accept()
+        else:
+            self.close()
 
     def disconnect(self, close_code):
         pass
 
     def receive(self, text_data):
-        pass
+        json_data = json.loads(text_data)
+        try:
+            request = json_data['request']
+            # Just decline for now
+            if request == 'player':
+                self.send(text_data=json.dumps({
+                    'type': 'player',
+                    'player': 'denied',
+                }))
+        except KeyError:
+            self.send(text_data=json.dumps({
+                'type': 'error',
+                'message': 'Unrecognized request type'
+            }))

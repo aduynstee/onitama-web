@@ -267,15 +267,58 @@ class MoveList extends Component {
 }
 
 class App extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            "userPlayer": "unknown",
+        };
+        props.socket.onmessage = (event) => {
+            let msg = JSON.parse(event.data);
+            if (msg.type === "player") {
+                this.setState({
+                    "userPlayer": msg.player
+                });
+            }
+        }
+        this.requestPlayer();
+    }
+
+    requestPlayer() {
+        this.props.socket.send(JSON.stringify({
+            "request": "player",
+        }));
+    }
+
     render() {
-        return (
-            <div className="App">
-                 <Game
-                    userPlayer={this.props.userPlayer}
-                    socket={this.props.socket}
-                />
-            </div>
-        );
+        let legalPlayers = ["red", "blue"];
+        if (legalPlayers.includes(this.state.userPlayer)) {
+            return (
+                <div className="App">
+                     <Game
+                        userPlayer={this.state.userPlayer}
+                        socket={this.props.socket}
+                    />
+                </div>
+            );
+        } else if (this.state.userPlayer === "unknown") {
+            return (
+                <div className="App">
+                     Connecting...
+                </div>
+            );
+        } else if (this.state.userPlayer === "denied") {
+            return (
+                <div className="App">
+                     You do not have permission to see this game.
+                </div>
+            );
+        } else {
+            return (
+                <div className="App">
+                     An error occurred.
+                </div>
+            );
+        }
     }
 }
 
