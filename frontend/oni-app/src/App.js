@@ -36,6 +36,7 @@ class Game extends Component {
         this.userPlayer = props.userPlayer;
         this.showTurn = this.showTurn.bind(this);
         this.selectSquare = this.selectSquare.bind(this);
+        this.selectCard = this.selectCard.bind(this);
         this.socket = props.socket;
         this.socket.onmessage = (event) => {
             let msg = JSON.parse(event.data);
@@ -82,16 +83,21 @@ class Game extends Component {
             "selectedSquare": null,
             "highlightSquares": [],
         });
+        this.pendingCardSelection = false;
     }
 
     selectSquare(number) {
+        this.pendingCardSelection = false;
         if ((this.userPlayer === this.data.activePlayer)
             && (this.state.displayTurn === this.state.currentTurn)) {
             let cards;
             if (this.userPlayer === "red") {
                 cards = this.state.cards.slice(0,2);
-            } else {
+            } else if (this.userPlayer === "blue"){
                 cards = this.state.cards.slice(2,4);
+            } else {
+                console.log("You cannot make moves in this game!");
+                return;
             }
             if (this.state.selectedSquare === null) {
                 let moves = [];
@@ -118,7 +124,25 @@ class Game extends Component {
                     }
                 }
                 if (moves.includes(number)) {
-                    alert("Legal move to square "+number);
+                    //Legal move selected
+                    let useableCards = [];
+                    for (let i = 0; i < cards.length; i++) {
+                        let cardMoves = this.data.legalMoves[cards[i]][source];
+                        if (cardMoves !== null && cardMoves.includes(number)) {
+                            useableCards = useableCards.concat(cards[i]);
+                        }
+                    }
+                    if (useableCards.length === 1) {
+                        //Only one card useable for this moves
+                        this.sendMove(source, number, useableCards[0]);
+                    } else if (useableCards.length === 2) {
+                        //Player must choose a card to use
+                        this.pendingCardSelection = true;
+                        this.moveSelection = {
+                            "start": source,
+                            "end": number,
+                        };
+                    }
                 } else {
                     //Was not a legal move, so treat it as a square selection
                     moves = [];
@@ -139,6 +163,33 @@ class Game extends Component {
         }
     }
 
+    selectCard(card) {
+        console.log("Clicked on card "+card);
+        console.log("Card selection state: "+this.pendingCardSelection);
+        let cards = [];
+        if (this.userPlayer === "red") {
+            cards = this.state.cards.slice(0,2);
+        } else if (this.userPlayer === "blue") {
+            cards = this.state.cards.slice(2,4);
+        } else {
+            console.log("You cannot make moves in this game!");
+            return;
+        }
+        if (this.pendingCardSelection === true
+            && cards.includes(card)) {
+            this.sendMove(
+                this.moveSelection.start,
+                this.moveSelection.end,
+                card,
+            );
+            this.pendingCardSelection = false;
+        }
+    }
+
+    sendMove(start, end, card) {
+        alert("Send move from "+start+" to "+end+" using card "+card);
+    }
+
     render() {
         if (this.state.loaded) {
             return (
@@ -154,9 +205,15 @@ class Game extends Component {
                         <div className="card-row">
                             <Card
                                 name={this.state.cards[2]}
+                                onClick={
+                                    () => this.selectCard(this.state.cards[2])
+                                }
                             />
                             <Card
                                 name={this.state.cards[3]}
+                                onClick={
+                                    () => this.selectCard(this.state.cards[3])
+                                }
                             />
                         </div>
                         <Board
@@ -168,9 +225,15 @@ class Game extends Component {
                         <div className="card-row">
                             <Card
                                 name={this.state.cards[0]}
+                                onClick={
+                                    () => this.selectCard(this.state.cards[0])
+                                }
                             />
                             <Card
                                 name={this.state.cards[1]}
+                                onClick={
+                                    () => this.selectCard(this.state.cards[1])
+                                }
                             />
                         </div>
                     </div>
@@ -194,7 +257,10 @@ class Game extends Component {
 class Card extends Component {
     render() {
         return (
-            <div className="card">
+            <div
+                className="card"
+                onClick = {this.props.onClick}
+            >
                 {this.props.name}
             </div>
         )
