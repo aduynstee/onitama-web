@@ -11,6 +11,7 @@ def index(request):
 def game(request, game_id):
     game = get_object_or_404(Game, pk=game_id)
     socket_url = "ws://localhost:8000/ws/onitama/game/{}/".format(game_id)
+    request.session.save() # Need to manually save to ensure Session is stored (will be needed later)
     return render(
         request,
         'onitama_game/game.html',

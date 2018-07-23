@@ -43,6 +43,13 @@ class Game extends Component {
                 this.update(msg.gameData);
             }
         }
+        this.requestUpdate();
+    }
+
+    requestUpdate() {
+        this.socket.send(JSON.stringify({
+            "request": "update",
+        }));
     }
 
     update(gameData) {
