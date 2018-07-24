@@ -10,7 +10,7 @@ class GameConsumer(WebsocketConsumer):
     def connect(self):
         game_id = self.scope['url_route']['kwargs']['game_id']
         if (Game.objects.filter(id=game_id).exists()):
-            self.scope['game_id'] = game_id
+            self.game_id = game_id
             self.game_group = 'game_'+str(game_id)
             async_to_sync(self.channel_layer.group_add)(
                 self.game_group,
@@ -27,7 +27,7 @@ class GameConsumer(WebsocketConsumer):
         json_data = json.loads(text_data)
         try:
             request = json_data['request']
-            game = Game.objects.get(pk=self.scope['game_id'])
+            game = Game.objects.get(pk=self.game_id)
             session = Session.objects.get(pk=self.scope['session'].session_key)
             # Find player according to session
             # If not found try to add new player to game for this session
@@ -116,7 +116,7 @@ class GameConsumer(WebsocketConsumer):
     # Send game update to all users
     def update_all(self):
         game_data = json.loads(
-            Game.objects.get(pk=self.scope['game_id']).client_encode()
+            Game.objects.get(pk=self.game_id).client_encode()
         )
         data = {
             'type': 'update',
