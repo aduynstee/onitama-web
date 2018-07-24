@@ -1,7 +1,8 @@
 from channels.generic.websocket import WebsocketConsumer
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.sessions.models import Session
-from .models import Game, Player
+from .models import Game, Player, Move
+from .modules import onitama as oni
 import json
 
 class GameConsumer(WebsocketConsumer):
@@ -50,6 +51,48 @@ class GameConsumer(WebsocketConsumer):
                     'gameData': game_data,
                     'type': 'update',
                 }))
+            elif request == 'move':
+                player = Player.objects.get(game=game, session=session)
+                # Translate move data into proper format
+                start = (
+                    json_data['start'] % 5,
+                    json_data['start'] // 5,
+                )
+                end = (
+                    json_data['end'] % 5,
+                    json_data['end'] // 5,
+                )
+                card = oni.NAME_TO_CARD[json_data['card']]
+                if player.color == 'R':
+                    oniplayer = oni.Player.RED
+                else:
+                    oniplayer = oni.Player.BLUE
+                onimove = oni.Move(
+                    player=oniplayer,
+                    start=start,
+                    end=end,
+                    card=card
+                )
+                live_game = game.as_live_game()
+                try:
+                    live_game.do_move(onimove)
+                    turn = len(live_game.moves)
+                    x = ['A', 'B', 'C', 'D', 'E']
+                    y = ['1', '2', '3', '4', '5']
+                    card = game.cards.get(name__iexact=json_data['card'])
+                    Move.objects.create(
+                        game=game,
+                        player=player.color,
+                        start=x[start[0]]+y[start[1]],
+                        end=x[end[0]]+y[end[1]],
+                        turn=turn,
+                        card=card,
+                    )
+                except oni.IllegalMoveError:
+                    self.send(text_data=json.dumps({
+                        'type': 'error',
+                        'message': 'You attempted an illegal move'
+                    }))
         except KeyError:
             self.send(text_data=json.dumps({
                 'type': 'error',

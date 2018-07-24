@@ -187,7 +187,12 @@ class Game extends Component {
     }
 
     sendMove(start, end, card) {
-        alert("Send move from "+start+" to "+end+" using card "+card);
+        this.socket.send(JSON.stringify({
+            "request": "move",
+            "start": start,
+            "end": end,
+            "card": card,
+        }));
     }
 
     render() {
