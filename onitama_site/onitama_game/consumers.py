@@ -1,6 +1,7 @@
 from channels.generic.websocket import WebsocketConsumer
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.sessions.models import Session
+from asgiref.sync import async_to_sync
 from .models import Game, Player, Move
 from .modules import onitama as oni
 import json
@@ -10,6 +11,11 @@ class GameConsumer(WebsocketConsumer):
         game_id = self.scope['url_route']['kwargs']['game_id']
         if (Game.objects.filter(id=game_id).exists()):
             self.scope['game_id'] = game_id
+            self.game_group = 'game_'+str(game_id)
+            async_to_sync(self.channel_layer.group_add)(
+                self.game_group,
+                self.channel_name
+            )
             self.accept()
         else:
             self.close()
@@ -88,6 +94,7 @@ class GameConsumer(WebsocketConsumer):
                         turn=turn,
                         card=card,
                     )
+                    self.update_all()
                 except oni.IllegalMoveError:
                     self.send(text_data=json.dumps({
                         'type': 'error',
@@ -105,3 +112,25 @@ class GameConsumer(WebsocketConsumer):
                 'message': 'A server error occurred'
             }))
             return
+
+    # Send game update to all users
+    def update_all(self):
+        game_data = json.loads(
+            Game.objects.get(pk=self.scope['game_id']).client_encode()
+        )
+        data = {
+            'type': 'update',
+            'gameData': game_data,
+        }
+        text_data = json.dumps(data)
+        async_to_sync(self.channel_layer.group_send)(
+            self.game_group,
+            {
+                'type': 'broadcast',
+                'text_data': text_data,
+            },
+        )
+
+    # Receive broadcasted data from game group
+    def broadcast(self, event):
+        self.send(text_data=event['text_data'])
