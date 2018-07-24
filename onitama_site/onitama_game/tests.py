@@ -29,7 +29,7 @@ class MyTest(TestCase):
         ]
         Move.objects.create(
             game=cls.game,
-            player='R',
+            color='R',
             turn=1,
             start='C1',
             end='C2',
@@ -37,7 +37,7 @@ class MyTest(TestCase):
         )
         Move.objects.create(
             game=cls.game,
-            player='B',
+            color='B',
             turn=2,
             start='C5',
             end='C4',
@@ -45,7 +45,7 @@ class MyTest(TestCase):
         )
         Move.objects.create(
             game=cls.game,
-            player='R',
+            color='R',
             turn=3,
             start='C2',
             end='C3',
@@ -53,7 +53,7 @@ class MyTest(TestCase):
         )
         Move.objects.create(
             game=cls.game,
-            player='B',
+            color='B',
             turn=4,
             start='C4',
             end='C2',
@@ -61,7 +61,7 @@ class MyTest(TestCase):
         )
         Move.objects.create(
             game=cls.game,
-            player='R',
+            color='R',
             turn=5,
             start='C3',
             end='C4',
@@ -83,7 +83,7 @@ class MyTest(TestCase):
     def test_bad_move(self):
         Move.objects.create(
             game=self.game,
-            player='R',
+            color='R',
             turn=6,
             start='C1',
             end='C2',

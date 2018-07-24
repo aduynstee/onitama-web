@@ -88,7 +88,7 @@ class GameConsumer(WebsocketConsumer):
                     card = game.cards.get(name__iexact=json_data['card'])
                     Move.objects.create(
                         game=game,
-                        player=player.color,
+                        color=player.color,
                         start=x[start[0]]+y[start[1]],
                         end=x[end[0]]+y[end[1]],
                         turn=turn,

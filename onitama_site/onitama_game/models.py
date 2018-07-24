@@ -91,7 +91,7 @@ class Move(models.Model):
         (x+y, x+y) for x in ['A', 'B', 'C', 'D', 'E'] for y in ['1', '2', '3', '4', '5']
     )
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    player = models.CharField(max_length=1, choices=PLAYER_CHOICES)
+    color = models.CharField(max_length=1, choices=PLAYER_CHOICES)
     turn = models.PositiveSmallIntegerField()
     start = models.CharField(max_length=2, choices=LOCATION_CHOICES)
     end = models.CharField(max_length=2, choices=LOCATION_CHOICES)
@@ -102,7 +102,7 @@ class Move(models.Model):
         unique_together = ("game", "turn")
 
     def as_live_move(self):
-        player = oni.Player.RED if self.player == 'R' else oni.Player.BLUE
+        player = oni.Player.RED if self.color == 'R' else oni.Player.BLUE
         x = ['A', 'B', 'C', 'D', 'E']
         y = ['1', '2', '3', '4', '5']
         start = (x.index(self.start[0]), y.index(self.start[1]))
