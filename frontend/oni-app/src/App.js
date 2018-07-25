@@ -44,7 +44,11 @@ class Game extends Component {
                 this.update(msg.gameData);
             }
         }
-        setTimeout(this.requestUpdate.bind(this), 100);
+        // setTimeout(this.requestUpdate.bind(this), 100);
+    }
+
+    componentDidMount() {
+        this.requestUpdate();
     }
 
     requestUpdate() {
@@ -360,7 +364,11 @@ class App extends Component {
                 });
             }
         }
-        setTimeout(this.requestPlayer.bind(this), 100);
+        // setTimeout(this.requestPlayer.bind(this), 100);
+    }
+
+    componentDidMount() {
+        this.requestPlayer();
     }
 
     requestPlayer() {
