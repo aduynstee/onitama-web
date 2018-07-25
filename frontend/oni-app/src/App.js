@@ -44,7 +44,6 @@ class Game extends Component {
                 this.update(msg.gameData);
             }
         }
-        // setTimeout(this.requestUpdate.bind(this), 100);
     }
 
     componentDidMount() {
@@ -168,8 +167,6 @@ class Game extends Component {
     }
 
     selectCard(card) {
-        console.log("Clicked on card "+card);
-        console.log("Card selection state: "+this.pendingCardSelection);
         let cards = [];
         if (this.userPlayer === "red") {
             cards = this.state.cards.slice(0,2);
@@ -355,8 +352,6 @@ class App extends Component {
             "userPlayer": "unknown",
         };
         props.socket.onmessage = (event) => {
-            console.log(event);
-            console.log(this.state);
             let msg = JSON.parse(event.data);
             if (msg.type === "player") {
                 this.setState({
@@ -364,7 +359,6 @@ class App extends Component {
                 });
             }
         }
-        // setTimeout(this.requestPlayer.bind(this), 100);
     }
 
     componentDidMount() {
