@@ -19,7 +19,7 @@ mockSocket.send = function(msg) {
         mockEvent = {
             "data": JSON.stringify({
                 "type": "player",
-                "player": "red",
+                "player": "blue",
             })
         };
     } else {

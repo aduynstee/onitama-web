@@ -3,26 +3,9 @@ import "./App.css";
 
 class Piece extends Component {
     render() {
-        let val = "X";
-        switch(this.props.value) {
-            case "redpawn":
-            case "bluepawn":
-                val = "P";
-                break;
-            case "redking":
-            case "blueking":
-                val = "K";
-                break;
-            case "empty":
-                val = "E";
-                break;
-            default:
-                break;
-        }
+        let cls = "piece "+this.props.value;
         return (
-            <div className={this.props.value}>
-                {val}
-            </div>
+            <div className={cls}></div>
         )
     }
 }

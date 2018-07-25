@@ -24,13 +24,23 @@
     display: inline-block;
 }
 
+.board-row {
+    line-height: 0px;
+}
+
+.board-square {
+    height: 30px;
+    width: 30px;
+    border: 1px solid black;
+}
+
 .game-left, .game-center, .game-right {
     display: inline-block;
     margin-left: 5px;
     margin-right: 5px;
 }
 
-.redpawn, .redking {
+.bluepawn, .redking {
     color: red;
 }
 
@@ -44,4 +54,26 @@
 
 .selected {
     background-color: green;
+}
+
+.piece {
+    height: 100%;
+    width: 100%;
+    background-size: cover;
+}
+
+.piece.bluepawn {
+    background-image: url('./assets/bluepawn.svg');
+}
+
+.piece.redking {
+    background-image: url('./assets/redking.svg');
+}
+
+.piece.blueking {
+    background-image: url('./assets/blueking.svg');
+}
+
+.piece.redpawn {
+    background-image: url('./assets/redpawn.svg');
 }
