@@ -320,20 +320,46 @@ class Board extends Component {
 class MoveList extends Component {
     render() {
         let movelist = [];
-        for (let i = 0; i < this.props.moves.length; i++) {
-            let cls;
-            if (i === this.props.selectedMove) {
-                cls = "move selected";
-            } else {
-                cls = "move";
+        let c = "startmove move";
+        if (this.props.selectedMove === 0) {
+            c = "startmove move selected";
+        }
+        movelist.push(
+            <div
+                key={0}
+                className={c}
+                onClick={() => this.props.clickHandler(0)}
+            >
+                {this.props.moves[0]}
+            </div>
+        );
+        for (let i = 1; i < this.props.moves.length; i = i+2) {
+            let cls = "move";
+            let row = [];
+            for (let j = 0; j < 2; j++) {
+                if (i+j < this.props.moves.length) {
+                    if (i+j === this.props.selectedMove) {
+                        cls = "move selected";
+                    } else {
+                        cls = "move";
+                    }
+                    row.push(
+                        <span
+                            key={i+j}
+                            className={cls}
+                            onClick={() => this.props.clickHandler(i+j)}
+                        >
+                            {this.props.moves[i+j]}
+                        </span>
+                    );
+                }
             }
             movelist.push(
                 <div
                     key={i}
-                    className={cls}
-                    onClick={() => this.props.clickHandler(i)}
+                    className="turn-row"
                 >
-                    {this.props.moves[i]}
+                    {row}
                 </div>
             );
         }
