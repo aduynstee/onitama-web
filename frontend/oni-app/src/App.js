@@ -44,7 +44,7 @@ class Game extends Component {
                 this.update(msg.gameData);
             }
         }
-        this.requestUpdate();
+        setTimeout(this.requestUpdate.bind(this), 100);
     }
 
     requestUpdate() {
@@ -351,6 +351,8 @@ class App extends Component {
             "userPlayer": "unknown",
         };
         props.socket.onmessage = (event) => {
+            console.log(event);
+            console.log(this.state);
             let msg = JSON.parse(event.data);
             if (msg.type === "player") {
                 this.setState({
@@ -358,7 +360,7 @@ class App extends Component {
                 });
             }
         }
-        this.requestPlayer();
+        setTimeout(this.requestPlayer.bind(this), 100);
     }
 
     requestPlayer() {
