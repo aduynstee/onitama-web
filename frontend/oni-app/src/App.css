@@ -20,6 +20,29 @@
     margin-right: 5px;
 }
 
+.cardgrid-square.filled {
+    background-color: black;
+}
+
+.cardgrid-square.blank {
+    background-color: white;
+}
+
+.cardgrid-square.center {
+    background-color: lightgreen;
+}
+
+.cardgrid-square {
+    height: 10px;
+    width: 10px;
+    border: 1px solid black;
+    display: inline-block;
+}
+
+.cardgrid-row {
+    line-height: 0;
+}
+
 .board-row .board-square {
     display: inline-block;
 }
@@ -53,7 +76,7 @@
 }
 
 .selected {
-    background-color: green;
+    background-color: lightgreen;
 }
 
 .piece {
