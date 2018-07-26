@@ -20,6 +20,10 @@
     margin-right: 5px;
 }
 
+.card.pending {
+    background-color: yellow;
+}
+
 .cardgrid-square.filled {
     background-color: black;
 }
@@ -55,6 +59,15 @@
     height: 30px;
     width: 30px;
     border: 1px solid black;
+}
+
+.board-square.target {
+    background-color: red;
+}
+
+.move-row {
+    display: flex;
+    justify-content: space-between;
 }
 
 .game-left, .game-center, .game-right {

@@ -68,12 +68,14 @@ class Game extends Component {
             "displayTurn": turn.number,
             "selectedSquare": null,
             "highlightSquares": [],
+            "pendingCardSelection": false,
         });
-        this.pendingCardSelection = false;
     }
 
     selectSquare(number) {
-        this.pendingCardSelection = false;
+        this.setState({
+            "pendingCardSelection": false,
+        });
         if ((this.userPlayer === this.data.activePlayer)
             && (this.state.displayTurn === this.state.currentTurn)) {
             let cards;
@@ -123,11 +125,13 @@ class Game extends Component {
                         this.sendMove(source, number, useableCards[0]);
                     } else if (useableCards.length === 2) {
                         //Player must choose a card to use
-                        this.pendingCardSelection = true;
                         this.moveSelection = {
                             "start": source,
                             "end": number,
                         };
+                        this.setState({
+                            "pendingCardSelection": true,
+                        });
                     }
                 } else {
                     //Was not a legal move, so treat it as a square selection
@@ -159,14 +163,16 @@ class Game extends Component {
             console.log("You cannot make moves in this game!");
             return;
         }
-        if (this.pendingCardSelection === true
+        if (this.state.pendingCardSelection === true
             && cards.includes(card)) {
             this.sendMove(
                 this.moveSelection.start,
                 this.moveSelection.end,
                 card,
             );
-            this.pendingCardSelection = false;
+            this.setState({
+                "pendingCardSelection": false,
+            });
         }
     }
 
@@ -181,6 +187,17 @@ class Game extends Component {
 
     render() {
         if (this.state.loaded) {
+            let target = null;
+            if (this.state.pendingCardSelection) {
+                target = this.moveSelection.end;
+            }
+            let pendingIfPlayer = (player) => {
+                if (this.userPlayer === player) {
+                    return this.state.pendingCardSelection
+                } else {
+                    return false;
+                }
+            }
             return (
                 <div id="game">
                     <div className="game-left">
@@ -194,6 +211,7 @@ class Game extends Component {
                         <div className="card-row">
                             <Card
                                 name={this.state.cards[2]}
+                                pending={pendingIfPlayer("blue")}
                                 onClick={
                                     () => this.selectCard(this.state.cards[2])
                                 }
@@ -201,6 +219,7 @@ class Game extends Component {
                             />
                             <Card
                                 name={this.state.cards[3]}
+                                pending={pendingIfPlayer("blue")}
                                 onClick={
                                     () => this.selectCard(this.state.cards[3])
                                 }
@@ -211,17 +230,20 @@ class Game extends Component {
                             board={this.state.board}
                             highlight={this.state.highlightSquares}
                             select={this.state.selectedSquare}
+                            target={target}
                             clickHandler={this.selectSquare}
                         />
                         <div className="card-row">
                             <Card
                                 name={this.state.cards[0]}
+                                pending={pendingIfPlayer("red")}
                                 onClick={
                                     () => this.selectCard(this.state.cards[0])
                                 }
                             />
                             <Card
                                 name={this.state.cards[1]}
+                                pending={pendingIfPlayer("red")}
                                 onClick={
                                     () => this.selectCard(this.state.cards[1])
                                 }
@@ -276,8 +298,7 @@ class Card extends Component {
                     cls = "cardgrid-square filled";
                 } else if (i*5 + j === 12) {
                     cls = "cardgrid-square center";
-                }
-                else {
+                } else {
                     cls = "cardgrid-square blank";
                 }
                 row.push(
@@ -299,10 +320,14 @@ class Card extends Component {
                 </div>
             );
         }
+        let cls = "card";
+        if (this.props.pending) {
+            cls += " pending";
+        }
         if (this.props.flipCard) {
             return (
                 <div
-                    className="card"
+                    className={cls}
                     onClick = {this.props.onClick}
                 >
                     {this.props.name}
@@ -313,7 +338,7 @@ class Card extends Component {
             rows.reverse();
             return (
                 <div
-                    className="card"
+                    className={cls}
                     onClick = {this.props.onClick}
                 >
                     {rows}
@@ -330,7 +355,9 @@ class Board extends Component {
         let squares = []
         for (let i = 0; i < this.props.board.length; i++) {
             let cls;
-            if (this.props.highlight.includes(i)) {
+            if (this.props.target === i) {
+                cls = "board-square target"
+            } else if (this.props.highlight.includes(i)) {
                 cls = "board-square highlight";
             } else if (this.props.select === i) {
                 cls = "board-square selected";
@@ -396,27 +423,27 @@ class MoveList extends Component {
                         cls = "move";
                     }
                     row.push(
-                        <span
+                        <div
                             key={i+j}
                             className={cls}
                             onClick={() => this.props.clickHandler(i+j)}
                         >
                             {this.props.moves[i+j]}
-                        </span>
+                        </div>
                     );
                 }
             }
             movelist.push(
                 <div
                     key={i}
-                    className="turn-row"
+                    className="move-row"
                 >
                     {row}
                 </div>
             );
         }
         return (
-            <div className="turn-list">
+            <div className="move-list">
                 {movelist}
             </div>
         )
