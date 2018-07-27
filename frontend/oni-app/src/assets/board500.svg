@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500">
+    <path d="M0 0 h 500 v 3 h -500"/>
+    <path d="M0 97 h 500 v 6 h -500"/>
+    <path d="M0 197 h 500 v 6 h -500"/>
+    <path d="M0 297 h 500 v 6 h -500"/>
+    <path d="M0 397 h 500 v 6 h -500"/>
+    <path d="M0 497 h 500 v 3 h -500"/>
+    <path d="M0 0 v 500 h 3 v -500"/>
+    <path d="M97 0 v 500 h 6 v -500"/>
+    <path d="M197 0 v 500 h 6 v -500"/>
+    <path d="M297 0 v 500 h 6 v -500"/>
+    <path d="M397 0 v 500 h 6 v -500"/>
+    <path d="M497 0 v 500 h 3 v -500"/>
+</svg>
