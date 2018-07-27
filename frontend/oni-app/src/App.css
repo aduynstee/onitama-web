@@ -62,7 +62,7 @@
 }
 
 .board-square.target {
-    background-color: red;
+    background-color: orange;
 }
 
 .board-square.highlight {
@@ -76,6 +76,10 @@
 .move-row {
     display: flex;
     justify-content: space-between;
+}
+
+.move-list .selected {
+    background-color: lightgreen;
 }
 
 .game-left, .game-center, .game-right {
