@@ -1,13 +1,14 @@
-.App {
-    margin-top: 10%;
-    border: 5px solid green;
+#game {
+    height: 700px;
+    width: 700px;
+    margin: auto;
+    margin-top: 100px;
+    text-align: center;
 }
 
-#game {
-    margin: auto;
-    width: 50%;
-    border: 5px solid black;
-    text-align: center;
+.game-center {
+    height: 40%;
+    width: 40%;
 }
 
 .card-row {
@@ -48,19 +49,27 @@
     line-height: 0;
 }
 
+#board {
+    height: 100%;
+    width: 100%;
+}
+
 .board-row .board-square {
     display: inline-block;
 }
 
 .board-row {
     line-height: 0px;
+    height: 20%;
+    margin-top: -1px;
 }
 
 .board-square {
-    height: 30px;
-    width: 30px;
+    height: 100%;
+    width: 20%;
     border: 1px solid black;
     margin: -1px 0 0 -1px;
+    box-sizing: border-box;
 }
 
 .board-square.target {
