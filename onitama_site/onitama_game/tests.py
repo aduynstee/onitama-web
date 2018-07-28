@@ -119,3 +119,8 @@ class MyTest(TestCase):
         Player.objects.create(game=self.game, color='R', session=session)
         with self.assertRaises(IntegrityError):
             Player.objects.create(game=self.game, color='B', session=session)
+
+    def test_game_create(self):
+        game = Game.create()
+        for card in game.cards.all():
+            self.assertTrue(card in self.cards)

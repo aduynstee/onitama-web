@@ -1,4 +1,5 @@
 import json
+import random
 from .modules import onitama as oni
 from .exceptions import GameIntegrityError
 from django.db import models
@@ -8,6 +9,19 @@ from django.contrib.sessions.models import Session
 class Game(models.Model):
     start_date = models.DateTimeField(auto_now_add=True)
     cards = models.ManyToManyField("Card", through="GameCard")
+
+    @classmethod
+    def create(cls):
+        cards = random.sample(list(Card.objects.all()), 5)
+        game = Game.objects.create()
+        holders = ['R', 'R', 'B', 'B', 'N']
+        for i in range(5):
+            GameCard.objects.create(
+                game=game,
+                card=cards[i],
+                cardholder=holders[i]
+            )
+        return game
 
     def as_live_game(self):
         gc = GameCard.objects.filter(game=self)
