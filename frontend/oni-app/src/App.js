@@ -191,12 +191,15 @@ class Game extends Component {
             if (this.state.pendingCardSelection) {
                 target = this.moveSelection.end;
             }
-            let pendingIfPlayer = (player) => {
-                if (this.userPlayer === player) {
-                    return this.state.pendingCardSelection
-                } else {
-                    return false;
-                }
+            let flipBoard = (this.userPlayer === "blue") ? true : false;
+            let topCards = [];
+            let bottomCards = [];
+            if (flipBoard) {
+                topCards = this.state.cards.slice(0,2);
+                bottomCards = this.state.cards.slice(2,4);
+            } else {
+                topCards = this.state.cards.slice(2,4);
+                bottomCards = this.state.cards.slice(0,2);
             }
             return (
                 <div id="game">
@@ -210,18 +213,16 @@ class Game extends Component {
                     <div className="game-center">
                         <div className="card-row">
                             <Card
-                                name={this.state.cards[2]}
-                                pending={pendingIfPlayer("blue")}
+                                name={topCards[0]}
                                 onClick={
-                                    () => this.selectCard(this.state.cards[2])
+                                    () => this.selectCard(topCards[0])
                                 }
                                 flipCard={true}
                             />
                             <Card
-                                name={this.state.cards[3]}
-                                pending={pendingIfPlayer("blue")}
+                                name={topCards[1]}
                                 onClick={
-                                    () => this.selectCard(this.state.cards[3])
+                                    () => this.selectCard(topCards[1])
                                 }
                                 flipCard={true}
                             />
@@ -232,21 +233,22 @@ class Game extends Component {
                             select={this.state.selectedSquare}
                             target={target}
                             clickHandler={this.selectSquare}
+                            flipBoard={flipBoard}
                         />
                         <div className="card-row">
                             <Card
-                                name={this.state.cards[0]}
-                                pending={pendingIfPlayer("red")}
+                                name={bottomCards[0]}
                                 onClick={
-                                    () => this.selectCard(this.state.cards[0])
+                                    () => this.selectCard(bottomCards[0])
                                 }
+                                pending={this.state.pendingCardSelection}
                             />
                             <Card
-                                name={this.state.cards[1]}
-                                pending={pendingIfPlayer("red")}
+                                name={bottomCards[1]}
                                 onClick={
-                                    () => this.selectCard(this.state.cards[1])
+                                    () => this.selectCard(bottomCards[1])
                                 }
+                                pending={this.state.pendingCardSelection}
                             />
                         </div>
                     </div>
@@ -379,14 +381,21 @@ class Board extends Component {
         let rows = []
         //Row 0 should be blue's start row (squares 20 through 24)
         for (let i = 0; i < 5; i++) {
+            let row = squares.slice(5*i, 5*(i+1));
+            if (this.props.flipBoard) {
+                row.reverse();
+            }
             rows[5-i] = (
                 <div
                     className="board-row"
                     key={i}
                 >
-                    {squares.slice(5*i, 5*(i+1))}
+                    {row}
                 </div>
-            )
+            );
+        }
+        if (this.props.flipBoard) {
+            rows.reverse();
         }
         return (
             <div id="board">
