@@ -1,0 +1,114 @@
+[
+    {
+        "pk": "1",
+        "model": "onitama_game.card",
+        "fields": {
+            "name": "MONKEY"
+        }
+    },
+    {
+        "pk": "2",
+        "model": "onitama_game.card",
+        "fields": {
+            "name": "ELEPHANT"
+        }
+    },
+    {
+        "pk": "3",
+        "model": "onitama_game.card",
+        "fields": {
+            "name": "CRANE"
+        }
+    },
+    {
+        "pk": "4",
+        "model": "onitama_game.card",
+        "fields": {
+            "name": "MANTIS"
+        }
+    },
+    {
+        "pk": "5",
+        "model": "onitama_game.card",
+        "fields": {
+            "name": "TIGER"
+        }
+    },
+    {
+        "pk": "6",
+        "model": "onitama_game.card",
+        "fields": {
+            "name": "DRAGON"
+        }
+    },
+    {
+        "pk": "7",
+        "model": "onitama_game.card",
+        "fields": {
+            "name": "BOAR"
+        }
+    },
+    {
+        "pk": "8",
+        "model": "onitama_game.card",
+        "fields": {
+            "name": "CRAB"
+        }
+    },
+    {
+        "pk": "9",
+        "model": "onitama_game.card",
+        "fields": {
+            "name": "GOOSE"
+        }
+    },
+    {
+        "pk": "10",
+        "model": "onitama_game.card",
+        "fields": {
+            "name": "ROOSTER"
+        }
+    },
+    {
+        "pk": "11",
+        "model": "onitama_game.card",
+        "fields": {
+            "name": "EEL"
+        }
+    },
+    {
+        "pk": "12",
+        "model": "onitama_game.card",
+        "fields": {
+            "name": "COBRA"
+        }
+    },
+    {
+        "pk": "13",
+        "model": "onitama_game.card",
+        "fields": {
+            "name": "HORSE"
+        }
+    },
+    {
+        "pk": "14",
+        "model": "onitama_game.card",
+        "fields": {
+            "name": "OX"
+        }
+    },
+    {
+        "pk": "15",
+        "model": "onitama_game.card",
+        "fields": {
+            "name": "FROG"
+        }
+    },
+    {
+        "pk": "16",
+        "model": "onitama_game.card",
+        "fields": {
+            "name": "RABBIT"
+        }
+    }
+]
