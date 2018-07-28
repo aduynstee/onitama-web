@@ -41,7 +41,7 @@ class Game extends Component {
 
     update(gameData) {
         this.data = gameData;
-        let newMoves = ['Start'];
+        let newMoves = ["Start"];
         for (let i = 1; i < gameData.turns.length; i++) {
             newMoves.push(gameData.turns[i].lastMove);
         }
@@ -201,6 +201,10 @@ class Game extends Component {
                 topCards = this.state.cards.slice(2,4);
                 bottomCards = this.state.cards.slice(0,2);
             }
+            let playerOrder = ["red", "blue"];
+            if (this.data.startPlayer === "blue") {
+                playerOrder.reverse();
+            }
             return (
                 <div id="game">
                     <div className="game-left">
@@ -208,6 +212,7 @@ class Game extends Component {
                             moves={this.state.moves}
                             selectedMove={this.state.displayTurn}
                             clickHandler={this.showTurn}
+                            playerOrder={playerOrder}
                         />
                     </div>
                     <div className="game-center">
@@ -446,48 +451,21 @@ class Board extends Component {
 class MoveList extends Component {
     render() {
         let movelist = [];
-        let c = "startmove move";
-        if (this.props.selectedMove === 0) {
-            c = "startmove move selected";
-        }
-        movelist.push(
-            <div
-                key={0}
-                className={c}
-                onClick={() => this.props.clickHandler(0)}
-            >
-                {this.props.moves[0]}
-            </div>
-        );
-        for (let i = 1; i < this.props.moves.length; i = i+2) {
+        for (let i = 1; i < this.props.moves.length; i++) {
             let cls = "move";
-            let row = [];
-            for (let j = 0; j < 2; j++) {
-                if (i+j < this.props.moves.length) {
-                    if (i+j === this.props.selectedMove) {
-                        cls = "move selected";
-                    } else {
-                        cls = "move";
-                    }
-                    row.push(
-                        <div
-                            key={i+j}
-                            className={cls}
-                            onClick={() => this.props.clickHandler(i+j)}
-                        >
-                            {this.props.moves[i+j]}
-                        </div>
-                    );
-                }
+            if (i === this.props.selectedMove) {
+                cls += " selected";
             }
+            cls += " "+this.props.playerOrder[(i-1) % 2];
             movelist.push(
                 <div
+                    className={cls}
                     key={i}
-                    className="move-row"
+                    onClick={() => this.props.clickHandler(i)}
                 >
-                    {row}
+                    {this.props.moves[i]}
                 </div>
-            );
+            )
         }
         return (
             <div className="move-list">
