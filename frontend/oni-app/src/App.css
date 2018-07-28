@@ -11,6 +11,7 @@
     -moz-user-select: none;
     -ms-user-select: none;
     -webkit-user-select: none;
+    border: 5px solid white;
 }
 
 .card-row .card {
@@ -19,7 +20,7 @@
 }
 
 .card.pending {
-    background-color: yellow;
+    border: 5px solid red;
 }
 
 .cardgrid-square.filled {
@@ -44,6 +45,7 @@
 
 .cardgrid-row {
     line-height: 0;
+    margin-left: 1px;
 }
 
 #files {
