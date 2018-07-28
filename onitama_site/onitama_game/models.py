@@ -112,7 +112,7 @@ class Move(models.Model):
 
 
 class Card(models.Model):
-    name = models.CharField(max_length=10)
+    name = models.CharField(max_length=10, unique=True)
 
     def as_live_card(self):
         return oni.NAME_TO_CARD[self.name.lower()]
