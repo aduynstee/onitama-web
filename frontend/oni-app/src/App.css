@@ -36,12 +36,31 @@
     line-height: 0;
 }
 
+#files {
+    display: flex;
+    justify-content: space-around;
+    width: 400px; /* needs to match #board height */
+    margin-left: 5px; /* needs to match #board border */
+    clear: both;
+}
+
+#ranks {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: space-around;
+    margin-left: 3px;
+    margin-top: 5px; /* needs to match #board border */
+    height: 400px; /* needs to match #board height */
+    float: right;
+}
+
 #board {
     height: 400px;
     width: 400px;
     background-image: url('./assets/board500.svg');
     border: 5px solid black;
     background-size: cover;
+    float: left;
 }
 
 .board-row .board-square {

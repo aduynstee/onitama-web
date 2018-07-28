@@ -397,9 +397,47 @@ class Board extends Component {
         if (this.props.flipBoard) {
             rows.reverse();
         }
+        let fileLetters = ['a','b','c','d','e'];
+        if (this.props.flipBoard) {
+            fileLetters.reverse();
+        }
+        let files = [];
+        for (let i = 0; i < 5; i++) {
+            files.push(
+                <div
+                    className="file"
+                    key={i}
+                >
+                    {fileLetters[i]}
+                </div>
+            );
+        }
+        let rankLetters = ['1','2','3','4','5'];
+        if (this.props.flipBoard) {
+            rankLetters.reverse();
+        }
+        let ranks = [];
+        for (let i = 0; i < 5; i++) {
+            ranks.push(
+                <div
+                    className="rank"
+                    key={i}
+                >
+                    {rankLetters[i]}
+                </div>
+            );
+        }
         return (
-            <div id="board">
-                {rows}
+            <div id="board-container">
+                <div id="board">
+                    {rows}
+                </div>
+                <div id="ranks">
+                    {ranks}
+                </div>
+                <div id="files">
+                    {files}
+                </div>
             </div>
         )
     }
