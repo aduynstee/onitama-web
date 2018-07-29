@@ -11,5 +11,3 @@ socket.onopen = function(e) {
     ReactDOM.render(<App socket={socket} />, document.getElementById('root'));
     registerServiceWorker();
 }
-
-socket.onopen(null);
