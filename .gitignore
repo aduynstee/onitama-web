@@ -181,3 +181,7 @@ venv.bak/
 
 
 # End of https://www.gitignore.io/api/django,python,pycharm
+
+.idea/
+frontend/oni-app/src/assets/originals/
+reactbuild/
