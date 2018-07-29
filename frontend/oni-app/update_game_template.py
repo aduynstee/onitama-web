@@ -19,11 +19,11 @@ template = r'''<!DOCTYPE html>
   <body>
     <div id="root"></div>
     <script>
-      window.socketAddress = "{{socket_url}}";
+      window.socketAddress = "ws://"+window.location.host+"{{{{socket_path}}}}";
     </script>
-    <script type="text/javascript" src="/static/js/main.'+output_name+'.js"></script>
+    <script type="text/javascript" src="/static/js/main.{}.js"></script>
   </body>
-</html>'''
+</html>'''.format(output_name)
 
 with open(r'..\..\onitama_site\onitama_game\templates\onitama_game\game.html', 'w') as f:
     f.write(template)
