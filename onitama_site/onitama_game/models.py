@@ -86,10 +86,11 @@ class Game(models.Model):
                 movelist[index] = endlist
             card_name = card_mapping[card]
             lm[card_name] = movelist
+
         result = {
             'turns': turns,
             'activePlayer': 'red' if live_game.active_player == oni.Player.RED else 'blue',
-            'lastTurn': self.move_set.last().turn,
+            'lastTurn': 0 if not self.move_set.exists() else self.move_set.last().turn,
             'legalMoves': lm,  # TODO generate legal moves
             'startPlayer': 'red' if start_player == oni.Player.RED else 'blue',
         }
