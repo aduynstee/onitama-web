@@ -1,2 +1,0 @@
-body{margin:0;padding:0;font-family:sans-serif}.App{margin-top:10%;border:5px solid green}#game{margin:auto;width:50%;border:5px solid #000}#game,.card-row{text-align:center}.card-row .card{margin-left:5px;margin-right:5px}.board-row .board-square,.card-row .card{display:inline-block}.game-center,.game-left,.game-right{display:inline-block;margin-left:5px;margin-right:5px}.redking,.redpawn{color:red}.blueking,.bluepawn{color:blue}.highlight{background-color:#ff0}.selected{background-color:green}
-/*# sourceMappingURL=main.a8da6748.css.map*/
