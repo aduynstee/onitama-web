@@ -2,18 +2,26 @@ import os
 import re
 
 pattern = re.compile(r"main\.(?P<name>.+)\.js")
-directory = r'..\..\onitama_site\onitama_game\reactbuild\static\js'
+js_directory = r'..\..\onitama_site\onitama_game\reactbuild\static\js'
 
-for filename in os.listdir(directory):
+for filename in os.listdir(js_directory):
     if filename.endswith(".js"):
         result = pattern.search(filename)
-        output_name = result.group("name")
+        script_name = result.group("name")
+
+pattern = re.compile(r"main\.(?P<name>.+)\.css")
+css_directory = r'..\..\onitama_site\onitama_game\reactbuild\static\css'
+
+for filename in os.listdir(css_directory):
+    if filename.endswith(".css"):
+        result = pattern.search(filename)
+        stylesheet_name = result.group("name")
 
 template = r'''<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8"/>
-      <link href="/static/css/main.a8da6748.css" rel="stylesheet">
+      <link href="/static/css/main.{}.css" rel="stylesheet">
       <title>Game</title>
   </head>
   <body>
@@ -23,7 +31,7 @@ template = r'''<!DOCTYPE html>
     </script>
     <script type="text/javascript" src="/static/js/main.{}.js"></script>
   </body>
-</html>'''.format(output_name)
+</html>'''.format(stylesheet_name, script_name)
 
 with open(r'..\..\onitama_site\onitama_game\templates\onitama_game\game.html', 'w') as f:
     f.write(template)
