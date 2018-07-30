@@ -37,16 +37,12 @@ class GameConsumer(WebsocketConsumer):
                 if players.filter(session=session).exists():
                     color = players.filter(session=session).first().color
                     response = 'red' if color == 'R' else 'blue'
-                elif players.count() == 0:
-                    # Assign red to first player
-                    Player.objects.create(game=game, session=session, color='R')
-                    response = 'red'
-                elif players.count() == 1:
-                    # Assume red is always assigned first, so blue is chosen next
-                    Player.objects.create(game=game, session=session, color='B')
-                    response = 'blue'
                 else:
-                    response = 'denied'
+                    player = game.add_player(session=session)
+                    if player is None:
+                        response = 'denied'
+                    else:
+                        response = 'red' if player.color == 'R' else 'blue'
                 self.send(text_data=json.dumps({
                     'type': 'player',
                     'player': response,

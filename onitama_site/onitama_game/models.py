@@ -23,6 +23,29 @@ class Game(models.Model):
             )
         return game
 
+    # Add Player to game given a user Session
+    # Returns None if game is full
+    # If Player successfully added or already existed, return the Player
+    def add_player(self, session):
+        players = Player.objects.filter(game=self)
+        if players.filter(session=session).exists():
+            return players.get(session=session)
+        if players.count() == 0:
+            return Player.objects.create(
+                game=self,
+                color=random.choice(['R','B']),
+                session=session,
+            )
+        elif players.count() == 1:
+            color = 'R' if players.first().color == 'B' else 'B'
+            return Player.objects.create(
+                game=self,
+                color=color,
+                session=session,
+            )
+        else:
+            return None
+
     def as_live_game(self):
         gc = GameCard.objects.filter(game=self)
         red = [x.card.as_live_card() for x in gc.filter(cardholder='R')]
