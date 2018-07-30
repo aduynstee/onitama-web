@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.sessions.backends.base import UpdateError
 from .models import Game
 
@@ -22,5 +22,9 @@ def game(request, game_id):
     return render(
         request,
         'onitama_game/game.html',
-        {'game': game, 'socket_path': socket_path}
+        {'socket_path': socket_path}
     )
+
+def new(request):
+    game = Game.create()
+    return redirect('game', game_id=game.id)

@@ -12,19 +12,10 @@
         <li><a href="/onitama/game/{{ game.id }}/">Game {{ game.id }}</a></li>
     {% endfor %}
     </ul>
-{% else %}
+    {% else %}
     <p>No games!</p>
-{% endif %}
+    {% endif %}
+
+    <a href="/onitama/new/">New game</a>
 </body>
-<script>
-    var socket = new WebSocket("ws://"+window.location.host+"/ws/onitama/");
-    socket.onmessage = function(e) {
-        console.log(e.data);
-    }
-    socket.onopen = function(e) {
-        socket.send("Hello websocket!");
-        socket.send("Hello websocket2!");
-        socket.send("Hello websocket3!");
-    }
-</script>
 </html>
