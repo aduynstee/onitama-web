@@ -8,6 +8,13 @@ import registerServiceWorker from './registerServiceWorker';
 var socket = new WebSocket(window.socketAddress);
 
 socket.onopen = function(e) {
-    ReactDOM.render(<App socket={socket} />, document.getElementById('root'));
+    ReactDOM.render(
+        <App
+            socket={socket}
+            userPlayer={window.userPlayer}
+            gameData={window.gameData}
+        />,
+         document.getElementById('root')
+     );
     registerServiceWorker();
 }

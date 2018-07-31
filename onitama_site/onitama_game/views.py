@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.sessions.backends.base import UpdateError
 from django.contrib.sessions.models import Session
@@ -20,10 +21,21 @@ def game(request, game_id):
         # If Session was deleted from database must issue a new one
         request.session.flush()
         request.session.save()
+    session = Session.objects.get(pk=request.session.session_key)
+    player = game.add_player(session)
+    if player is None:
+        user_player = 'observer'
+    else:
+        user_player = 'red' if player.color == 'R' else 'blue'
+    game_data = game.client_encode()
     return render(
         request,
         'onitama_game/game.html',
-        {'socket_path': socket_path}
+        {
+            'socket_path': socket_path,
+            'user_player': user_player,
+            'game_data': game_data,
+        }
     )
 
 def new(request):
