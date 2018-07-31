@@ -1,37 +1,29 @@
 import os
 import re
 
-pattern = re.compile(r"main\.(?P<name>.+)\.js")
+pattern = re.compile(r"main\.\w+\.js")
 js_directory = r'..\..\onitama_site\onitama_game\reactbuild\static\js'
 
 for filename in os.listdir(js_directory):
     if filename.endswith(".js"):
-        result = pattern.search(filename)
-        script_name = result.group("name")
+        script_name = pattern.search(filename).group(0)
 
-pattern = re.compile(r"main\.(?P<name>.+)\.css")
+pattern = re.compile(r"main\.\w+\.css")
 css_directory = r'..\..\onitama_site\onitama_game\reactbuild\static\css'
 
 for filename in os.listdir(css_directory):
     if filename.endswith(".css"):
-        result = pattern.search(filename)
-        stylesheet_name = result.group("name")
+        stylesheet_name = pattern.search(filename).group(0)
 
-template = r'''<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8"/>
-      <link href="/static/css/main.{}.css" rel="stylesheet">
-      <title>Game</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script>
-      window.socketAddress = "ws://"+window.location.host+"{{{{socket_path}}}}";
-    </script>
-    <script type="text/javascript" src="/static/js/main.{}.js"></script>
-  </body>
-</html>'''.format(stylesheet_name, script_name)
+script = '"\static\js\{}"'.format(script_name)
+stylesheet = '"\static\css\{}"'.format(stylesheet_name)
 
-with open(r'..\..\onitama_site\onitama_game\templates\onitama_game\game.html', 'w') as f:
-    f.write(template)
+style_pat = re.compile(r';;game_stylesheet;;')
+script_pat = re.compile(r';;game_script;;')
+
+with open(r'..\..\onitama_site\onitama_game\templates\onitama_game\game.template.html', 'r') as template:
+    with open(r'..\..\onitama_site\onitama_game\templates\onitama_game\game.html', 'w') as output:
+        for line in template:
+            line = re.sub(script_pat, script, line)
+            line = re.sub(style_pat, stylesheet, line)
+            output.write(line)
