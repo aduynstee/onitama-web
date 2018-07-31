@@ -114,7 +114,7 @@ class Game(models.Model):
             'turns': turns,
             'activePlayer': 'red' if live_game.active_player == oni.Player.RED else 'blue',
             'lastTurn': 0 if not self.move_set.exists() else self.move_set.last().turn,
-            'legalMoves': lm,  # TODO generate legal moves
+            'legalMoves': lm,
             'startPlayer': 'red' if start_player == oni.Player.RED else 'blue',
         }
         return json.dumps(result)
