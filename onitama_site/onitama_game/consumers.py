@@ -29,25 +29,7 @@ class GameConsumer(WebsocketConsumer):
             request = json_data['request']
             game = Game.objects.get(pk=self.game_id)
             session = Session.objects.get(pk=self.scope['session'].session_key)
-            # Find player according to session
-            # If not found try to add new player to game for this session
-            # If game is full respond with 'denied'
-            if request == 'player':
-                players = game.player_set
-                if players.filter(session=session).exists():
-                    color = players.filter(session=session).first().color
-                    response = 'red' if color == 'R' else 'blue'
-                else:
-                    player = game.add_player(session=session)
-                    if player is None:
-                        response = 'denied'
-                    else:
-                        response = 'red' if player.color == 'R' else 'blue'
-                self.send(text_data=json.dumps({
-                    'type': 'player',
-                    'player': response,
-                }))
-            elif request == 'update':
+            if request == 'update':
                 game_data = json.loads(game.client_encode())
                 self.send(text_data=json.dumps({
                     'gameData': game_data,
