@@ -109,13 +109,25 @@ class Game(models.Model):
                 movelist[index] = endlist
             card_name = card_mapping[card]
             lm[card_name] = movelist
-
+        users = {
+            'red': None,
+            'blue': None,
+        }
+        for player in self.player_set.all():
+            color = 'red' if player.color == 'R' else 'blue'
+            try:
+                # Check if Player chose a username
+                users[color] = GuestUser.objects.get(session=player.session).username
+            except GuestUser.DoesNotExist:
+                # Otherwise give name as 'Guest'
+                users[color] = 'Guest'
         result = {
             'turns': turns,
             'activePlayer': 'red' if live_game.active_player == oni.Player.RED else 'blue',
             'lastTurn': 0 if not self.move_set.exists() else self.move_set.last().turn,
             'legalMoves': lm,
             'startPlayer': 'red' if start_player == oni.Player.RED else 'blue',
+            'users': users,
         }
         return json.dumps(result)
 

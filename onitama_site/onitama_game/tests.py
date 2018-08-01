@@ -2,10 +2,10 @@ import json
 from .exceptions import GameIntegrityError
 from .modules import onitama as oni
 from django.test import TestCase
-from .models import Game, Card, GameCard, Move, Player
+from .models import Game, Card, GameCard, Move, Player, GuestUser
 from django.contrib.sessions.backends.db import SessionStore
 from django.contrib.sessions.models import Session
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 
 
 class MyTest(TestCase):
@@ -111,16 +111,39 @@ class MyTest(TestCase):
             else:
                 self.assertTrue(moves is None)
         self.assertEqual(set(ox_moves[20]), {15})
+        self.assertEqual(obj['users']['red'], None)
+        self.assertEqual(obj['users']['blue'], None)
 
     def test_player(self):
         s = SessionStore()
         s.create()
         session = Session.objects.get(pk=s.session_key)
-        Player.objects.create(game=self.game, color='R', session=session)
+        Player.objects.create(game=self.game, color='B', session=session)
         with self.assertRaises(IntegrityError):
-            Player.objects.create(game=self.game, color='B', session=session)
+            with transaction.atomic():
+                Player.objects.create(game=self.game, color='B', session=session)
+        s2 = SessionStore()
+        s2.create()
+        self.game.add_player(Session.objects.get(pk=s2.session_key))
+        self.assertTrue(Player.objects.get(game=self.game, color='R'))
 
     def test_game_create(self):
         game = Game.create()
         for card in game.cards.all():
             self.assertTrue(card in self.cards)
+
+    def test_usernames(self):
+        s = SessionStore()
+        s.create()
+        session = Session.objects.get(pk=s.session_key)
+        Player.objects.create(game=self.game, color='R', session=session)
+        GuestUser.objects.create(session=session, username='testname')
+        client_game = json.loads(self.game.client_encode())
+        self.assertEqual(client_game['users']['red'], 'testname')
+        self.assertEqual(client_game['users']['blue'], None)
+        s2 = SessionStore()
+        s2.create()
+        self.game.add_player(Session.objects.get(pk=s2.session_key))
+        client_game = json.loads(self.game.client_encode())
+        self.assertEqual(client_game['users']['red'], 'testname')
+        self.assertEqual(client_game['users']['blue'], 'Guest')
