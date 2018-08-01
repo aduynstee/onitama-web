@@ -2,6 +2,7 @@ import json
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.sessions.backends.base import UpdateError
 from django.contrib.sessions.models import Session
+from django.views.decorators.http import require_POST
 from .models import Game, Player
 
 def index(request):
@@ -38,6 +39,7 @@ def game(request, game_id):
         }
     )
 
+@require_POST
 def new(request):
     try:
         # Need to manually save to ensure Session is stored (will be needed later)

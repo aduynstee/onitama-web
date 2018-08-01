@@ -16,6 +16,9 @@
     <p>No games!</p>
     {% endif %}
 
-    <a href="/onitama/new/">New game</a>
+    <form action="/onitama/new/" method="post">
+        {% csrf_token %}
+        <input type="submit" value="New game">
+    </form>
 </body>
 </html>
