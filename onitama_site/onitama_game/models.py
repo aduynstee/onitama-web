@@ -180,3 +180,8 @@ class Player(models.Model):
             ('game', 'color'),
             ('game', 'session'),
         )
+
+# For allowing an unregistered user to select a username, which is tied to Session
+class GuestUser(models.Model):
+    session = models.OneToOneField(Session, on_delete=models.CASCADE)
+    username = models.CharField(max_length=20)

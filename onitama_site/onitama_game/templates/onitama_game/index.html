@@ -5,7 +5,15 @@
     <title>Index</title>
 </head>
 <body>
-    <p>Hello</p>
+    <p>Hello {{username}}!</p>
+    {% if no_name %}
+    What is your name?
+    <form action="/onitama/guestname/" method="post">
+        {% csrf_token %}
+        <input type="text" name="username">
+        <input type="submit" value="Submit">
+    </form>
+    {% endif %}
     {% if game_list %}
     <ul>
     {% for game in game_list %}
