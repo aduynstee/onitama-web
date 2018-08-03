@@ -9,6 +9,7 @@ class Game extends Component {
         super(props);
         this.state = {
             "loaded": false,
+            "preRendered": false,
         };
         this.userPlayer = props.userPlayer;
         this.showTurn = this.showTurn.bind(this);
@@ -45,12 +46,14 @@ class Game extends Component {
         let latestTurnNum = gameData.turns.length-1;
         //If not loaded or user was viewing the latest turn, we update board
         if (!this.state.loaded ||
-            this.state.displayTurn === this.state.currentTurn) {
+            this.state.displayTurn === this.state.currentTurn ||
+            this.state.preRendered) {
             this.showTurn(latestTurnNum);
         }
         this.setState({
             "currentTurn": latestTurnNum,
             "loaded": true,
+            "preRendered": false,
         });
     }
 
@@ -116,7 +119,7 @@ class Game extends Component {
                     }
                     if (useableCards.length === 1) {
                         //Only one card useable for this moves
-                        this.sendMove(source, number, useableCards[0]);
+                        this.sendMove(source, number, useableCards[0], true);
                     } else if (useableCards.length === 2) {
                         //Player must choose a card to use
                         this.moveSelection = {
@@ -163,6 +166,7 @@ class Game extends Component {
                 this.moveSelection.start,
                 this.moveSelection.end,
                 card,
+                true,
             );
             this.setState({
                 "pendingCardSelection": false,
@@ -170,13 +174,56 @@ class Game extends Component {
         }
     }
 
-    sendMove(start, end, card) {
+    sendMove(start, end, card, preRender = false) {
+        if (preRender) {
+            this.preRenderMove(start, end, card);
+        }
         this.socket.send(JSON.stringify({
             "request": "move",
             "start": start,
             "end": end,
             "card": card,
         }));
+    }
+
+    // For the sake of responsiveness, we can pre render a move that we expect
+    // to be legal, before waiting for the authoritative update from
+    // the server (which then overrides any pre-rendering we have done)
+    preRenderMove(start, end, moveCard) {
+        let last = this.data.turns.length-1;
+        let newBoard = this.data.turns[last].board.slice();
+        let newCards = this.data.turns[last].cards.slice();
+        // Swap chosen card with the "neutral" card
+        newCards[newCards.indexOf(moveCard)] = newCards[4];
+        newCards[4] = moveCard;
+        newBoard[end] = newBoard[start];
+        newBoard[start] = "empty";
+        let files = ['a','b','c','d','e'];
+        let ranks = ['1','2','3','4','5'];
+        let startName = files[start % 5]+ranks[Math.floor(start/5)];
+        let endName = files[end % 5]+ranks[Math.floor(end/5)];
+        let moveName = startName+'-'+endName+' '+'['+moveCard+']';
+        let newTurn = {
+            "number": last+1,
+            "cards": newCards,
+            "board": newBoard,
+            "lastMove": moveName
+        };
+        // this.data.turns.push(newTurn);
+        let opp = (this.userPlayer === "red") ? "blue" : "red";
+        this.data.activePlayer = opp;
+        let newMoves = this.state.moves.concat([moveName]);
+        this.setState({
+            "moves": newMoves,
+            "preRendered": true,
+            "board": newBoard,
+            "cards": newCards,
+            "displayTurn": last+1,
+            "selectedSquare": null,
+            "highlightSquares": [],
+            "pendingCardSelection": false,
+        });
+        // this.showTurn(last+1);
     }
 
     render() {
