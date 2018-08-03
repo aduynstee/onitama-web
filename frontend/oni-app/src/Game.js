@@ -202,14 +202,7 @@ class Game extends Component {
         let ranks = ['1','2','3','4','5'];
         let startName = files[start % 5]+ranks[Math.floor(start/5)];
         let endName = files[end % 5]+ranks[Math.floor(end/5)];
-        let moveName = startName+'-'+endName+' '+'['+moveCard+']';
-        let newTurn = {
-            "number": last+1,
-            "cards": newCards,
-            "board": newBoard,
-            "lastMove": moveName
-        };
-        // this.data.turns.push(newTurn);
+        let moveName = startName+'-'+endName+' ['+moveCard+']';
         let opp = (this.userPlayer === "red") ? "blue" : "red";
         this.data.activePlayer = opp;
         let newMoves = this.state.moves.concat([moveName]);
@@ -223,7 +216,6 @@ class Game extends Component {
             "highlightSquares": [],
             "pendingCardSelection": false,
         });
-        // this.showTurn(last+1);
     }
 
     render() {
