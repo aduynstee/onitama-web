@@ -263,14 +263,15 @@ class Game extends Component {
             if (this.data.startPlayer === "blue") {
                 playerOrder.reverse();
             }
-            let opp = (this.userPlayer === "red") ? "blue" : "red";
+            let topPlayer = (flipBoard) ? "red" : "blue";
+            let bottomPlayer = (flipBoard) ? "blue" : "red";
             return (
                 <div id="game">
                     <div className="game-left">
                         <PlayerPanel
-                            name={this.state.userNames[opp]}
-                            color={opp}
-                            active={this.state.activePlayer === opp}
+                            name={this.state.userNames[topPlayer]}
+                            color={topPlayer}
+                            active={this.state.activePlayer === topPlayer}
                         />
                         <MoveList
                             moves={this.state.moves}
@@ -280,9 +281,9 @@ class Game extends Component {
                             playerOrder={playerOrder}
                         />
                         <PlayerPanel
-                            name={this.state.userNames[this.userPlayer]}
-                            color={this.userPlayer}
-                            active={this.state.activePlayer === this.userPlayer}
+                            name={this.state.userNames[bottomPlayer]}
+                            color={bottomPlayer}
+                            active={this.state.activePlayer === bottomPlayer}
                         />
                     </div>
                     <div className="game-center">
