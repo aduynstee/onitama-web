@@ -113,3 +113,18 @@ class GameConsumer(WebsocketConsumer):
     # Receive broadcasted data from game group
     def broadcast(self, event):
         self.send(text_data=event['text_data'])
+
+
+class LobbyConsumer(WebsocketConsumer):
+    def connect(self):
+        async_to_sync(self.channel_layer.group_add)(
+            'lobby',
+            self.channel_name
+        )
+        self.accept()
+
+    def disconnect(self, close_code):
+        pass
+
+    def receive(self, text_data):
+        pass
