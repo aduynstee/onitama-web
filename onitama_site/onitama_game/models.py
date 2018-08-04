@@ -118,7 +118,7 @@ class Game(models.Model):
             color = 'red' if player.color == 'R' else 'blue'
             try:
                 # Check if Player chose a username
-                users[color] = player.session.guestuser.username
+                users[color] = player.session.guestuser.username+' (Guest)'
             except ObjectDoesNotExist:
                 # Otherwise give name as 'Guest'
                 users[color] = 'Guest'
