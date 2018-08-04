@@ -19,9 +19,25 @@ function MoveList(props) {
             </div>
         )
     }
+    let buttonNames = ["Start", "Previous", "Next", "Current"];
+    let buttons = [];
+    for (let i = 0; i < buttonNames.length;  i++) {
+        buttons.push(
+            <button
+                onClick={() => props.buttonHandler(i)}
+            >
+                {buttonNames[i]}
+            </button>
+        );
+    }
     return (
-        <div className="move-list">
-            {movelist}
+        <div className="movelist-container">
+            <div className="move-buttons">
+                {buttons}
+            </div>
+            <div className="movelist">
+                {movelist}
+            </div>
         </div>
     )
 }

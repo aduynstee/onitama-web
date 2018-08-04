@@ -133,18 +133,22 @@
     background-image: url('./assets/redpawn.svg');
 }
 
-.move-list {
+.movelist-container {
+    width: 100%;
+}
+
+.movelist {
     display: flex;
     flex-flow: row wrap;
     align-content: flex-start;
-    width: 250px;
-    height: 100px;
+    width: 100%;
+    height: 200px;
     overflow: auto;
     border: 1px solid black;
     background-color: #efeff5;
 }
 
-.move-list > .move {
+.movelist > .move {
     flex: 0 0 50%;
     box-sizing: border-box;
     font-size: 16px;
@@ -156,19 +160,19 @@
     -webkit-user-select: none;
 }
 
-.move-list > .red {
+.movelist > .red {
     background-color: #ffcccc;
 }
 
-.move-list > .blue {
+.movelist > .blue {
     background-color: #b3e0ff;
 }
 
-.move-list > .blue.selected {
+.movelist > .blue.selected {
     background-color: #66c2ff;
 }
 
-.move-list > .red.selected {
+.movelist > .red.selected {
     background-color: #ff9999;
 }
 
@@ -176,6 +180,7 @@
     display: flex;
     flex-direction: column;
     height: 400px;
+    width: 250px;
     justify-content: space-between;
 }
 
@@ -197,5 +202,5 @@
 }
 
 .player-name.blue.active {
-    background-color: #4db8ff;
+    background-color: #0099ff;
 }

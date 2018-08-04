@@ -16,6 +16,7 @@ class Game extends Component {
         this.showTurn = this.showTurn.bind(this);
         this.selectSquare = this.selectSquare.bind(this);
         this.selectCard = this.selectCard.bind(this);
+        this.moveButtonHandler = this.moveButtonHandler.bind(this);
         this.socket = props.socket;
         this.socket.onmessage = (event) => {
             let msg = JSON.parse(event.data);
@@ -70,6 +71,26 @@ class Game extends Component {
             "highlightSquares": [],
             "pendingCardSelection": false,
         });
+    }
+
+    moveButtonHandler(button) {
+        let maxTurn = this.data.turns.length-1;
+        switch(button) {
+            case 0:
+                this.showTurn(0);
+                break;
+            case 1:
+                this.showTurn(Math.max(this.state.displayTurn-1, 0));
+                break;
+            case 2:
+                this.showTurn(Math.min(this.state.displayTurn+1, maxTurn));
+                break;
+            case 3:
+                this.showTurn(maxTurn);
+                break;
+            default:
+                break;
+        }
     }
 
     selectSquare(number) {
@@ -255,6 +276,7 @@ class Game extends Component {
                             moves={this.state.moves}
                             selectedMove={this.state.displayTurn}
                             clickHandler={this.showTurn}
+                            buttonHandler={this.moveButtonHandler}
                             playerOrder={playerOrder}
                         />
                         <PlayerPanel
