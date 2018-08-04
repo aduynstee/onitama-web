@@ -186,7 +186,11 @@
 
 .player-name {
     font-size: 25px;
-    padding: 10px;
+    padding: 20px;
+    border-radius: 15px;
+    /* background-color: #e6e6e6;
+    border-width: 5px;
+    border-style: solid; */
 }
 
 .player-name.red {
@@ -198,9 +202,9 @@
 }
 
 .player-name.red.active {
-    background-color: #ff4d4e;
+    background-color: #ff9999;
 }
 
 .player-name.blue.active {
-    background-color: #0099ff;
+    background-color: #66c2ff;
 }
