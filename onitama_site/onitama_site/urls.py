@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
+    path('', include('onitama_game.urls')),
     path('onitama/', include('onitama_game.urls')),
     path('admin/', admin.site.urls),
 ]
