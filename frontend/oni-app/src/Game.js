@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import MoveList from './MoveList.js';
 import Card from './Card.js';
 import Board from './Board.js';
+import PlayerPanel from './PlayerPanel.js';
 import "./App.css";
 
 class Game extends Component {
@@ -54,6 +55,8 @@ class Game extends Component {
             "currentTurn": latestTurnNum,
             "loaded": true,
             "preRendered": false,
+            "userNames": this.data.users,
+            "activePlayer": this.data.activePlayer,
         });
     }
 
@@ -215,6 +218,7 @@ class Game extends Component {
             "selectedSquare": null,
             "highlightSquares": [],
             "pendingCardSelection": false,
+            "activePlayer": opp,
         });
     }
 
@@ -238,14 +242,25 @@ class Game extends Component {
             if (this.data.startPlayer === "blue") {
                 playerOrder.reverse();
             }
+            let opp = (this.userPlayer === "red") ? "blue" : "red";
             return (
                 <div id="game">
                     <div className="game-left">
+                        <PlayerPanel
+                            name={this.state.userNames[opp]}
+                            color={opp}
+                            active={this.state.activePlayer === opp}
+                        />
                         <MoveList
                             moves={this.state.moves}
                             selectedMove={this.state.displayTurn}
                             clickHandler={this.showTurn}
                             playerOrder={playerOrder}
+                        />
+                        <PlayerPanel
+                            name={this.state.userNames[this.userPlayer]}
+                            color={this.userPlayer}
+                            active={this.state.activePlayer === this.userPlayer}
                         />
                     </div>
                     <div className="game-center">

@@ -17,6 +17,7 @@ class GameConsumer(WebsocketConsumer):
                 self.channel_name
             )
             self.accept()
+            self.update_all()
         else:
             self.close()
 

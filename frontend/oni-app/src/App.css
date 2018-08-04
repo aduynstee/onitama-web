@@ -171,3 +171,31 @@
 .move-list > .red.selected {
     background-color: #ff9999;
 }
+
+.game-left {
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+    justify-content: space-between;
+}
+
+.player-name {
+    font-size: 25px;
+    padding: 10px;
+}
+
+.player-name.red {
+    background-color: #ffe6e6;
+}
+
+.player-name.blue {
+    background-color: #e6f5ff;
+}
+
+.player-name.red.active {
+    background-color: #ff4d4e;
+}
+
+.player-name.blue.active {
+    background-color: #4db8ff;
+}

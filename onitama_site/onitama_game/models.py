@@ -4,6 +4,7 @@ from .modules import onitama as oni
 from .exceptions import GameIntegrityError
 from django.db import models
 from django.contrib.sessions.models import Session
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class Game(models.Model):
@@ -117,8 +118,8 @@ class Game(models.Model):
             color = 'red' if player.color == 'R' else 'blue'
             try:
                 # Check if Player chose a username
-                users[color] = GuestUser.objects.get(session=player.session).username
-            except GuestUser.DoesNotExist:
+                users[color] = player.session.guestuser.username
+            except ObjectDoesNotExist:
                 # Otherwise give name as 'Guest'
                 users[color] = 'Guest'
         result = {
@@ -129,6 +130,8 @@ class Game(models.Model):
             'startPlayer': 'red' if start_player == oni.Player.RED else 'blue',
             'users': users,
         }
+        if live_game.check_victory() is not None:
+            result['activePlayer'] = None
         return json.dumps(result)
 
 
