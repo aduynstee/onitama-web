@@ -245,6 +245,14 @@ class Game extends Component {
 
     render() {
         if (this.state.loaded) {
+            let obsBanner = "";
+            if (this.userPlayer === "observer") {
+                obsBanner = (
+                    <div id="obs-banner">
+                        You are spectating
+                    </div>
+                );
+            }
             let target = null;
             if (this.state.pendingCardSelection) {
                 target = this.moveSelection.end;
@@ -266,73 +274,76 @@ class Game extends Component {
             let topPlayer = (flipBoard) ? "red" : "blue";
             let bottomPlayer = (flipBoard) ? "blue" : "red";
             return (
-                <div id="game">
-                    <div className="game-left">
-                        <PlayerPanel
-                            name={this.state.userNames[topPlayer]}
-                            color={topPlayer}
-                            active={this.state.activePlayer === topPlayer}
-                        />
-                        <MoveList
-                            moves={this.state.moves}
-                            selectedMove={this.state.displayTurn}
-                            clickHandler={this.showTurn}
-                            buttonHandler={this.moveButtonHandler}
-                            playerOrder={playerOrder}
-                        />
-                        <PlayerPanel
-                            name={this.state.userNames[bottomPlayer]}
-                            color={bottomPlayer}
-                            active={this.state.activePlayer === bottomPlayer}
-                        />
-                    </div>
-                    <div className="game-center">
-                        <div className="card-row">
-                            <Card
-                                name={topCards[0]}
-                                onClick={
-                                    () => this.selectCard(topCards[0])
-                                }
-                                flipCard={true}
+                <div id="app-container">
+                    {obsBanner}
+                    <div id="game">
+                        <div className="game-left">
+                            <PlayerPanel
+                                name={this.state.userNames[topPlayer]}
+                                color={topPlayer}
+                                active={this.state.activePlayer === topPlayer}
                             />
-                            <Card
-                                name={topCards[1]}
-                                onClick={
-                                    () => this.selectCard(topCards[1])
-                                }
-                                flipCard={true}
+                            <MoveList
+                                moves={this.state.moves}
+                                selectedMove={this.state.displayTurn}
+                                clickHandler={this.showTurn}
+                                buttonHandler={this.moveButtonHandler}
+                                playerOrder={playerOrder}
+                            />
+                            <PlayerPanel
+                                name={this.state.userNames[bottomPlayer]}
+                                color={bottomPlayer}
+                                active={this.state.activePlayer === bottomPlayer}
                             />
                         </div>
-                        <Board
-                            board={this.state.board}
-                            highlight={this.state.highlightSquares}
-                            select={this.state.selectedSquare}
-                            target={target}
-                            clickHandler={this.selectSquare}
-                            flipBoard={flipBoard}
-                        />
-                        <div className="card-row">
-                            <Card
-                                name={bottomCards[0]}
-                                onClick={
-                                    () => this.selectCard(bottomCards[0])
-                                }
-                                pending={this.state.pendingCardSelection}
+                        <div className="game-center">
+                            <div className="card-row">
+                                <Card
+                                    name={topCards[0]}
+                                    onClick={
+                                        () => this.selectCard(topCards[0])
+                                    }
+                                    flipCard={true}
+                                />
+                                <Card
+                                    name={topCards[1]}
+                                    onClick={
+                                        () => this.selectCard(topCards[1])
+                                    }
+                                    flipCard={true}
+                                />
+                            </div>
+                            <Board
+                                board={this.state.board}
+                                highlight={this.state.highlightSquares}
+                                select={this.state.selectedSquare}
+                                target={target}
+                                clickHandler={this.selectSquare}
+                                flipBoard={flipBoard}
                             />
-                            <Card
-                                name={bottomCards[1]}
-                                onClick={
-                                    () => this.selectCard(bottomCards[1])
-                                }
-                                pending={this.state.pendingCardSelection}
-                            />
+                            <div className="card-row">
+                                <Card
+                                    name={bottomCards[0]}
+                                    onClick={
+                                        () => this.selectCard(bottomCards[0])
+                                    }
+                                    pending={this.state.pendingCardSelection}
+                                />
+                                <Card
+                                    name={bottomCards[1]}
+                                    onClick={
+                                        () => this.selectCard(bottomCards[1])
+                                    }
+                                    pending={this.state.pendingCardSelection}
+                                />
+                            </div>
                         </div>
-                    </div>
-                    <div className="game-right">
-                        <div className="neutral-card">
-                            <Card
-                                name={this.state.cards[4]}
-                            />
+                        <div className="game-right">
+                            <div className="neutral-card">
+                                <Card
+                                    name={this.state.cards[4]}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>

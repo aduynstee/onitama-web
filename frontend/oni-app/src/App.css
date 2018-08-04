@@ -1,3 +1,14 @@
+#app-container {
+    text-align: center;
+}
+
+#obs-banner {
+    background-color: lightgreen;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 20px;
+}
+
 #game {
     margin: auto;
     text-align: center;
