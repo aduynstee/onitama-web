@@ -15,8 +15,8 @@ for filename in os.listdir(css_directory):
     if filename.endswith(".css"):
         stylesheet_name = pattern.search(filename).group(0)
 
-script = r'"\static\js\{}"'.format(script_name)
-stylesheet = r'"\static\css\{}"'.format(stylesheet_name)
+script = r'"/static/js/{}"'.format(script_name)
+stylesheet = r'"/static/css/{}"'.format(stylesheet_name)
 
 style_pat = re.compile(r';;game_stylesheet;;')
 script_pat = re.compile(r';;game_script;;')
