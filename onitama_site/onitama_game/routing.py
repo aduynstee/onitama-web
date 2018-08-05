@@ -4,4 +4,5 @@ from . import consumers
 
 websocket_urlpatterns = [
     path('ws/onitama/game/<int:game_id>/', consumers.GameConsumer),
+    path('ws/onitama/lobby/', consumers.LobbyConsumer),
 ]

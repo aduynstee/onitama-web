@@ -127,4 +127,18 @@ class LobbyConsumer(WebsocketConsumer):
         pass
 
     def receive(self, text_data):
-        pass
+        data = json.loads(text_data)
+        if data['request'] == 'load':
+            self.load()
+
+    def load(self):
+        game_data = [
+            {
+                'name': 'Game '+str(game.id),
+                'path': '/onitama/game/{}/'.format(str(game.id))
+            } for game in Game.objects.all()[:5]
+        ]
+        self.send(json.dumps({
+            'type': 'load',
+            'data': game_data,
+        }))

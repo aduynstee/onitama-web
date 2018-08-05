@@ -6,8 +6,24 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            "games": props.games,
+            "games": [],
         };
+        this.socket = props.socket;
+        // this.load = this.load.bind(this);
+        this.socket.onmessage = (event) => {
+            let msg = JSON.parse(event.data);
+            if (msg.type === "load") {
+                this.setState({
+                    "games": msg.data
+                });
+            }
+        }
+    }
+
+    load() {
+        this.socket.send(JSON.stringify({
+            "request": "load",
+        }));
     }
 
     render() {
@@ -15,13 +31,17 @@ class App extends Component {
         for (let i = 0; i < this.state.games.length; i++) {
             rooms.push(
                 <Room
-                    name={this.state.games[i]}
+                    name={this.state.games[i]["name"]}
+                    key={i}
                 />
             );
         }
         return (
             <div className="lobby">
                 {rooms}
+                <button
+                    onClick={() => this.load()}
+                >Load</button>
             </div>
         )
     }

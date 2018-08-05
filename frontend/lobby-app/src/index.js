@@ -4,10 +4,10 @@ import './index.css';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
-var games = ['game1', 'game2', 'game3'];
+var socket = new WebSocket('ws://localhost:8000/ws/onitama/lobby/');
 
 ReactDOM.render(
-    <App games={games} />, 
+    <App socket={socket} />,
     document.getElementById('root')
 );
 registerServiceWorker();
