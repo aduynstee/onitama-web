@@ -9,7 +9,7 @@ class App extends Component {
             "games": [],
         };
         this.socket = props.socket;
-        // this.load = this.load.bind(this);
+        this.load = this.load.bind(this);
         this.socket.onmessage = (event) => {
             let msg = JSON.parse(event.data);
             if (msg.type === "load") {
@@ -33,6 +33,7 @@ class App extends Component {
                 <Room
                     name={this.state.games[i]["name"]}
                     key={i}
+                    link={this.state.games[i]["path"]}
                 />
             );
         }
