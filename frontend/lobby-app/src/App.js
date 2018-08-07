@@ -20,6 +20,10 @@ class App extends Component {
         }
     }
 
+    componentDidMount() {
+        this.load();
+    }
+
     load() {
         this.socket.send(JSON.stringify({
             "request": "load",
