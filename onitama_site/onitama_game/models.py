@@ -3,13 +3,25 @@ import random
 from .modules import onitama as oni
 from .exceptions import GameIntegrityError
 from django.db import models
+from django.utils import timezone
 from django.contrib.sessions.models import Session
 from django.core.exceptions import ObjectDoesNotExist
 
 
 class Game(models.Model):
-    start_date = models.DateTimeField(auto_now_add=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    started_on = models.DateTimeField(null=True, default=None)
     cards = models.ManyToManyField("Card", through="GameCard")
+    finished = models.BooleanField(default=False)
+    started = models.BooleanField(default=False)
+    winner = models.ForeignKey(
+        "Player",
+        null=True,
+        on_delete=models.PROTECT,
+        default=None,
+        related_name='+'
+    )
+
 
     @classmethod
     def create(cls):
@@ -27,23 +39,52 @@ class Game(models.Model):
     # Add Player to game given a user Session
     # Returns None if game is full
     # If Player successfully added or already existed, return the Player
-    def add_player(self, session):
-        players = Player.objects.filter(game=self)
-        if players.filter(session=session).exists():
-            return players.get(session=session)
-        if players.count() == 0:
-            return Player.objects.create(
-                game=self,
-                color=random.choice(['R','B']),
-                session=session,
-            )
-        elif players.count() == 1:
-            color = 'R' if players.first().color == 'B' else 'B'
-            return Player.objects.create(
-                game=self,
-                color=color,
-                session=session,
-            )
+    def add_player(self, session, color=None):
+        if color == None:
+            players = Player.objects.filter(game=self)
+            if players.filter(session=session).exists():
+                return players.get(session=session)
+            try:
+                username = session.guestuser.username
+            except GuestUser.DoesNotExist:
+                username = 'Anonymous'
+            if players.count() == 0:
+                return Player.objects.create(
+                    game=self,
+                    color=random.choice(['R','B']),
+                    session=session,
+                    username=username
+                )
+            elif players.count() == 1:
+                color = 'R' if players.first().color == 'B' else 'B'
+                p = Player.objects.create(
+                    game=self,
+                    color=color,
+                    session=session,
+                    username=username
+                )
+                self.started = True
+                self.started_on = timezone.now()
+                self.save()
+                return p
+            else:
+                return None
+        elif color in ['R','B'] and not self.player_set.filter(color=color).exists():
+                try:
+                    username = session.guestuser.username
+                except GuestUser.DoesNotExist:
+                    username = 'Anonymous'
+                p = Player.objects.create(
+                    game=self,
+                    color=color,
+                    session=session,
+                    username=username,
+                )
+                if Player.objects.filter(game=self).count() == 2:
+                    self.started = True
+                    self.started_on = timezone.now()
+                    self.save()
+                return p
         else:
             return None
 
@@ -59,6 +100,17 @@ class Game(models.Model):
             except oni.IllegalMoveError:
                 raise GameIntegrityError(self, move)
         return live_game
+
+    def check_finished(self):
+        try:
+            winner = self.as_live_game().check_victory()
+            if winner is not None:
+                win_color = 'R' if winner == oni.Player.RED else 'B'
+                self.winner = self.player_set.get(color=win_color)
+                self.finished = True
+                self.save()
+        except GameIntegrityError:
+            pass
 
     # Return a customized encoding of the game that will be used on the client side
     def client_encode(self):
@@ -110,18 +162,10 @@ class Game(models.Model):
                 movelist[index] = endlist
             card_name = card_mapping[card]
             lm[card_name] = movelist
-        users = {
-            'red': None,
-            'blue': None,
-        }
+        users = dict()
         for player in self.player_set.all():
             color = 'red' if player.color == 'R' else 'blue'
-            try:
-                # Check if Player chose a username
-                users[color] = player.session.guestuser.username+' (Guest)'
-            except ObjectDoesNotExist:
-                # Otherwise give name as 'Guest'
-                users[color] = 'Guest'
+            users[color] = player.username
         result = {
             'turns': turns,
             'activePlayer': 'red' if live_game.active_player == oni.Player.RED else 'blue',
@@ -188,7 +232,8 @@ class Player(models.Model):
     )
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
     color = models.CharField(max_length=1, choices=COLOR_CHOICES)
-    session = models.ForeignKey(Session, on_delete=models.CASCADE)
+    session = models.ForeignKey(Session, on_delete=models.SET_NULL, null=True)
+    username = models.CharField(max_length=20)
 
     class Meta:
         unique_together = (
