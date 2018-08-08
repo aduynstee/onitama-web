@@ -111,8 +111,8 @@ class MyTest(TestCase):
             else:
                 self.assertTrue(moves is None)
         self.assertEqual(set(ox_moves[20]), {15})
-        self.assertEqual(obj['users']['red'], None)
-        self.assertEqual(obj['users']['blue'], None)
+        self.assertFalse('red' in obj['users'].keys())
+        self.assertFalse('blue' in obj['users'].keys())
 
     def test_player(self):
         s = SessionStore()
@@ -136,14 +136,14 @@ class MyTest(TestCase):
         s = SessionStore()
         s.create()
         session = Session.objects.get(pk=s.session_key)
-        Player.objects.create(game=self.game, color='R', session=session)
         GuestUser.objects.create(session=session, username='testname')
+        self.game.add_player(session, color='R')
         client_game = json.loads(self.game.client_encode())
         self.assertEqual(client_game['users']['red'], 'testname')
-        self.assertEqual(client_game['users']['blue'], None)
+        self.assertFalse('blue' in client_game['users'])
         s2 = SessionStore()
         s2.create()
         self.game.add_player(Session.objects.get(pk=s2.session_key))
         client_game = json.loads(self.game.client_encode())
         self.assertEqual(client_game['users']['red'], 'testname')
-        self.assertEqual(client_game['users']['blue'], 'Guest')
+        self.assertEqual(client_game['users']['blue'], 'Anonymous')
