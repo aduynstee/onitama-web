@@ -34,19 +34,23 @@ class App extends Component {
         let rooms = [];
         for (let i = 0; i < this.state.games.length; i++) {
             rooms.push(
-                <Room
-                    name={this.state.games[i]["name"]}
-                    key={i}
-                    link={this.state.games[i]["path"]}
-                />
+                <li>
+                    <Room
+                        name={this.state.games[i]["name"]}
+                        players={this.state.games[i]["players"]}
+                        created={this.state.games[i]["created"]}
+                        key={i}
+                        link={this.state.games[i]["path"]}
+                    />
+                </li>
             );
         }
         return (
             <div className="lobby">
-                {rooms}
-                <button
-                    onClick={() => this.load()}
-                >Load</button>
+                Welcome!
+                <ul>
+                    {rooms}
+                </ul>
             </div>
         )
     }

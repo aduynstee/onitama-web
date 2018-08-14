@@ -1,6 +1,8 @@
 from channels.generic.websocket import WebsocketConsumer
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.sessions.models import Session
+from django.utils import timezone
 from asgiref.sync import async_to_sync
 from .models import Game, Player, Move
 from .modules import onitama as oni
@@ -135,10 +137,13 @@ class LobbyConsumer(WebsocketConsumer):
         game_data = [
             {
                 'name': 'Game '+str(game.id),
-                'path': '/onitama/game/{}/'.format(str(game.id))
-            } for game in Game.objects.all()[:5]
+                'path': '/onitama/game/{}/'.format(str(game.id)),
+                'players': [player.username for player in game.player_set.all()],
+                'created': game.lifetime(),
+            } for game in Game.objects.all().extra(order_by=['-created_on'])[:10]
         ]
-        self.send(json.dumps({
+        data = {
             'type': 'load',
             'data': game_data,
-        }))
+        }
+        self.send(json.dumps(data, cls=DjangoJSONEncoder))

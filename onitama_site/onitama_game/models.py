@@ -178,6 +178,22 @@ class Game(models.Model):
             result['activePlayer'] = None
         return json.dumps(result)
 
+    def lifetime(self):
+        td = timezone.now() - self.created_on
+        hour = 60*60;
+        minute = 60;
+        if td.days == 0:
+            if td.seconds > hour:
+                return '{}h{}m'.format(td.seconds//hour, td.seconds%hour//minute)
+            elif td.seconds > 5*minute:
+                return '{}m'.format(td.seconds//minute)
+            elif td.seconds > minute:
+                return '{}m{}s'.format(td.seconds//minute,td.seconds%minute)
+            else:
+                return '{}s'.format(td.seconds)
+        else:
+            return '{}d'.format(td.days)
+
 
 class Move(models.Model):
     PLAYER_CHOICES = (
